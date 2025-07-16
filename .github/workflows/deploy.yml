@@ -1,0 +1,37 @@
+name: Deploy to Prod via Bastion
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build JAR
+        run: ./gradlew clean build -x test
+
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Transfer JAR to EC2 via Bastion
+        run: |
+          scp -o ProxyJump=${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }} \
+              build/libs/app.jar \
+              ${{ secrets.SSH_USER }}@${{ secrets.PROD_IP }}:/home/ubuntu/app/jar/app.jar
+
+      - name: Trigger Deployment
+        run: |
+          ssh -o ProxyJump=${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }} \
+              ${{ secrets.SSH_USER }}@${{ secrets.PROD_IP }} << 'EOF'
+                cd /home/ubuntu/app
+                ./switch.sh
+          EOF
