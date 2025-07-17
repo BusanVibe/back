@@ -27,16 +27,16 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts || true
           ssh-keyscan -H ${{ secrets.PROD_IP }} >> ~/.ssh/known_hosts || true
-      
-      - name: Transfer JAR to EC2 via Bastion
+
+      - name: Transfer JAR to EC2 via Bastion (ProxyCommand)
         run: |
-          scp -o ProxyJump=${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }} -o StrictHostKeyChecking=no \
+          scp -o "ProxyCommand=ssh -W %h:%p -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }}" \
               build/libs/busan-0.0.1-SNAPSHOT.jar \
               ${{ secrets.SSH_USER }}@${{ secrets.PROD_IP }}:/home/ubuntu/app/jar/app.jar
-      
-      - name: Trigger Deployment
+
+      - name: Trigger Deployment (ProxyCommand)
         run: |
-          ssh -o ProxyJump=${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }} -o StrictHostKeyChecking=no \
+          ssh -o "ProxyCommand=ssh -W %h:%p -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }}" \
               ${{ secrets.SSH_USER }}@${{ secrets.PROD_IP }} << 'EOF'
                 cd /home/ubuntu/app
                 ./switch.sh
