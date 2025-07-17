@@ -24,10 +24,12 @@ jobs:
           ssh-keyscan -H ${{ secrets.PROD_IP }} >> ~/.ssh/known_hosts || true
           chmod 644 ~/.ssh/known_hosts
 
-      - name: Setup SSH Agent
+      - name: Setup SSH Agent (Bastion + Prod Key 등록)
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: |
+            ${{ secrets.BASTION_SSH_PRIVATE_KEY }}
+            ${{ secrets.PROD_SSH_PRIVATE_KEY }}
 
       - name: Test SSH to Bastion
         run: ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }} hostname
