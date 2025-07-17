@@ -10,6 +10,6 @@ services:
     volumes:
       - ./jar:/app
     env_file:
-        - .env
+      - .env
     environment:
       - SPRING_PROFILES_ACTIVE=prod
