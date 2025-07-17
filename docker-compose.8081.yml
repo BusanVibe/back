@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app_8081
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./jar:/app
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
