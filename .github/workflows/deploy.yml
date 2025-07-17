@@ -28,7 +28,6 @@ jobs:
           ssh-keyscan ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts
           ssh-keyscan ${{ secrets.PROD_IP }} >> ~/.ssh/known_hosts
 
-
       - name: Transfer JAR to EC2 via Bastion
         run: |
           scp -o ProxyJump=${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }} \
