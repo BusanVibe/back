@@ -17,26 +17,26 @@ jobs:
       - name: Build JAR
         run: ./gradlew clean build -x test
 
-      - name: Setup SSH Agent
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
       - name: Setup SSH known_hosts
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts || true
           ssh-keyscan -H ${{ secrets.PROD_IP }} >> ~/.ssh/known_hosts || true
 
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Transfer JAR to EC2 via Bastion (ProxyCommand)
         run: |
-          scp -o "ProxyCommand=ssh -W %h:%p -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }}" \
-              build/libs/busan-0.0.1-SNAPSHOT.jar \
-              ${{ secrets.SSH_USER }}@${{ secrets.PROD_IP }}:/home/ubuntu/app/jar/app.jar
+          scp -o "ProxyCommand=ssh -W %h:%p -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }}" \
+            build/libs/busan-0.0.1-SNAPSHOT.jar \
+            ${{ secrets.SSH_USER }}@${{ secrets.PROD_IP }}:/home/ubuntu/app/jar/app.jar
 
       - name: Trigger Deployment (ProxyCommand)
         run: |
-          ssh -o "ProxyCommand=ssh -W %h:%p -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }}" \
+          ssh -o "ProxyCommand=ssh -W %h:%p -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.BASTION_IP }}" \
               ${{ secrets.SSH_USER }}@${{ secrets.PROD_IP }} << 'EOF'
                 cd /home/ubuntu/app
                 ./switch.sh
