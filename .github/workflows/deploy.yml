@@ -22,11 +22,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Add bastion & target to known_hosts
+      - name: Add known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan ${{ secrets.BASTION_IP }} >> ~/.ssh/known_hosts
-          ssh-keyscan ${{ secrets.PROD_IP }} >> ~/.ssh/known_hosts
+          echo "${{ secrets.KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
 
       - name: Transfer JAR to EC2 via Bastion
         run: |
