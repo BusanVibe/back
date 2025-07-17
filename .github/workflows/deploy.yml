@@ -35,4 +35,3 @@ jobs:
                 cd /home/ubuntu/app
                 ./switch.sh
           EOF
-          
