@@ -9,5 +9,7 @@ services:
       - "8082:8080"
     volumes:
       - ./jar:/app
+    env_file:
+      - .env
     environment:
       - SPRING_PROFILES_ACTIVE=prod
