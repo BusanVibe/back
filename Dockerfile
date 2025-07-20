@@ -1,10 +1,8 @@
-FROM openjdk:17
+# server base image - java 17
+FROM eclipse-temurin:17-jdk
 
-# 컨테이너 내 작업 디렉토리 설정
-WORKDIR /home/ubuntu/app/app.jar/build/libs
+# copy .jar file to docker
+COPY ./build/libs/busan-0.0.1-SNAPSHOT.jar app.jar
 
-# 호스트의 빌드된 jar를 컨테이너 내부 지정 경로로 복사
-COPY build/libs/busan-0.0.1-SNAPSHOT.jar busan-0.0.1-SNAPSHOT.jar
-
-# JAR 실행 명령어 지정
-ENTRYPOINT ["java", "-jar", "busan-0.0.1-SNAPSHOT.jar"]
+# always do command
+ENTRYPOINT ["java", "-jar", "app.jar"]
