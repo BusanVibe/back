@@ -37,6 +37,10 @@ spring:
         use_sql_comments: true
         default_batch_fetch_size: 1000
 
+  kakao:
+    client-id: ${Client_ID}
+    redirect-uri: ${REDIRECT_URI}
+
   data:
     redis:
       host: ${REDIS_HOST}
