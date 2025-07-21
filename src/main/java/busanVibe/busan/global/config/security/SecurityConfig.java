@@ -1,5 +1,6 @@
 package busanVibe.busan.global.config.security;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -63,12 +64,20 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.addAllowedOrigin("http://localhost:5173");
-    configuration.addAllowedOrigin("http://localhost:8080");
-    configuration.addAllowedMethod("*");
+
+    configuration.setAllowedOriginPatterns(
+        List.of(
+            "http://localhost:5173",
+            "http://localhost:8080",
+            "https://busanvibe.site",
+            "https://*.busanvibe.site"
+        )
+    );
+
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.addAllowedHeader("*");
-    configuration.setAllowCredentials(true); // 인증 정보 포함 허용
-    configuration.setMaxAge(3600L); // CORS 요청 캐싱 시간 (1시간)
+    configuration.setAllowCredentials(true);
+    configuration.setMaxAge(3600L);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
