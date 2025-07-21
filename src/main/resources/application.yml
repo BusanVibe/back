@@ -48,3 +48,4 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
+
