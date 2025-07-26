@@ -22,7 +22,7 @@ class FestivalLike(
     val user: User,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn("festival_id")
+    @JoinColumn(name = "festival_id")
     val festival: Festival
 
 ): BaseEntity() {
