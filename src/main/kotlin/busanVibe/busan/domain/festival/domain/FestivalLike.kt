@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
-import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToOne
 
 @Entity
@@ -23,7 +22,7 @@ class FestivalLike(
     val user: User,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable("festival_id")
+    @JoinColumn("festival_id")
     val festival: Festival
 
 ): BaseEntity() {
