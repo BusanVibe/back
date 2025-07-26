@@ -1,0 +1,51 @@
+spring:
+  port: 8080
+  address: 0.0.0.0
+  logging:
+    level:
+      root: info
+
+  docker:
+    compose:
+      enabled: false
+  mvc:
+    servlet:
+      encoding:
+        charset: UTF-8
+        enabled: true
+        force: true
+  jackson:
+    time-zone: Asia/Seoul
+  config:
+    import: optional:file:.env
+  datasource:
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 1000
+
+  kakao:
+    client-id: ${Client_ID}
+    redirect-uri: ${REDIRECT_URI}
+
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+
+jwt:
+  secret: ${JWT_SECRET}
+
