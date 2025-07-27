@@ -1,40 +1,67 @@
-name: Notify Discord on PR merge to main
+name: Notify Discord on PR Merge to main
 
 on:
   pull_request:
-    types: [closed]
+    types: [closed]  # PR 종료 이벤트
 
 jobs:
   notify-discord:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
-
     steps:
-      - name: Get PR commits messages
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Get commits of merged PR
         id: get_commits
         run: |
-          echo "Fetching commits for PR #${{ github.event.pull_request.number }}"
-          response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          # PR 번호
+          PR_NUM=${{ github.event.pull_request.number }}
+
+          echo "Fetching commits for PR #$PR_NUM"
+          # GitHub API로 PR 커밋 목록 가져오기
+          COMMITS_JSON=$(curl -sSL \
             -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits")
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUM/commits")
 
-          echo "$response" > response.json
-          cat response.json
+          # jq로 커밋 해시, 작성자, 메시지를 파싱해서 구분자 | 로 한 줄씩 만듦
+          COMMITS=$(echo "$COMMITS_JSON" | jq -r '.[] | "\(.sha[0:7])|\(.commit.author.name)|\(.commit.message | split("\n")[0])"')
 
-          if echo "$response" | jq -e . >/dev/null 2>&1; then
-            echo "$response" | jq -r '.[] | "- " + .commit.message' > commit_messages.txt
-          else
-            echo "[]" > commit_messages.txt
-          fi
-
-          commit_messages=$(paste -sd '\n' commit_messages.txt)
-          echo "commit_messages<<EOF" >> $GITHUB_OUTPUT
-          echo "$commit_messages" >> $GITHUB_OUTPUT
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Send Discord webhook notification
+      - name: Build Discord message
+        id: build_message
         run: |
-          curl -H "Content-Type: application/json" \
-            -X POST \
-            -d "{\"content\":\":tada: PR #${{ github.event.pull_request.number }} merged into main!\n**Title:** ${{ github.event.pull_request.title }}\n**Author:** ${{ github.event.pull_request.user.login }}\n**Commits:**\n${{ steps.get_commits.outputs.commit_messages }}\"}" \
-            ${{ secrets.DISCORD_WEBHOOK_URL }}
+          commits="${{ steps.get_commits.outputs.commits }}"
+          message="🚀 **PR #${{ github.event.pull_request.number }} 머지 완료** (main 브랜치)\n\n"
+          message+="머지한 사람: @${{ github.actor }}  \n"
+          count=$(echo "$commits" | wc -l)
+          message+="커밋 $count 개 포함  \n"
+          message+="머지 시간: $(date '+%Y-%m-%d %H:%M')\n\n"
+          message+="커밋 내역:\n"
+
+          while IFS='|' read -r hash author subject; do
+            url="https://github.com/${{ github.repository }}/commit/$hash"
+            emoji="⚙️"
+            if echo "$subject" | grep -iq "fix"; then emoji="🐛"; fi
+            if echo "$subject" | grep -iq "add\|feat"; then emoji="✨"; fi
+            if echo "$subject" | grep -iq "breaking\|migrate"; then emoji="⚠️"; fi
+
+            message+="- [$hash]($url) $emoji $subject\n"
+          done <<< "$commits"
+
+          echo "message=$message" >> $GITHUB_OUTPUT
+
+      - name: Send Discord webhook
+        uses: bbhoss/webhook-dispatch@v1
+        with:
+          url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          method: POST
+          contentType: application/json
+          body: |
+            {
+              "content": "${{ steps.build_message.outputs.message }}"
+            }
