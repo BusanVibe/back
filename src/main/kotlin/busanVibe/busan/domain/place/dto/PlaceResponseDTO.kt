@@ -14,10 +14,11 @@ class PlaceResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class PlaceListInfoDto(
-        val placeId: Long,
+        val placeId: Long?,
         val name: String,
-        val congestionLevel: Integer,
+        val congestionLevel: Int,
         val isLike: Boolean,
+        val likeAmount: Int,
         val type: String,
         val address: String,
         val img: String

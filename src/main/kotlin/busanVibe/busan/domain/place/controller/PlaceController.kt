@@ -3,6 +3,7 @@ package busanVibe.busan.domain.place.controller
 import busanVibe.busan.domain.place.dto.PlaceResponseDTO
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.enums.PlaceSortType
+import busanVibe.busan.domain.place.service.PlaceQueryService
 import busanVibe.busan.global.apiPayload.exception.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,18 +14,20 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/places")
-class PlaceController {
+class PlaceController(
+    val placeQueryService: PlaceQueryService
+) {
 
     @GetMapping
     @Operation(summary = "명소 목록 조회 API")
     fun getPlaceList(
-        @RequestParam("category", required = false) category: PlaceType,
-        @RequestParam("sort", required = false) sort: PlaceSortType
+        @RequestParam("category", required = false) type: PlaceType?,
+        @RequestParam("sort", required = false) sort: PlaceSortType?
     ): ApiResponse<PlaceResponseDTO.PlaceListDto>?{
 
+        val placeList = placeQueryService.getPlaceList(type, sort)
+        return ApiResponse.onSuccess(placeList)
 
-
-        return null;
     }
 
     @GetMapping("/{placeId}")

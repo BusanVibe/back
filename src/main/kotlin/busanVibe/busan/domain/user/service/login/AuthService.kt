@@ -7,7 +7,6 @@ import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
 import org.springframework.security.core.context.SecurityContextHolder
 
 class AuthService(
-    private val userRepository: UserRepository,
 ) {
 
 
