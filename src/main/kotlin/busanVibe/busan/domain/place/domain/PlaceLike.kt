@@ -1,6 +1,5 @@
-package busanVibe.busan.domain.festival.domain
+package busanVibe.busan.domain.place.domain
 
-import busanVibe.busan.domain.common.BaseEntity
 import busanVibe.busan.domain.user.data.User
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -11,19 +10,19 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 
 @Entity
-class FestivalLike(
-
+class PlaceLike(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
+    val id: Long?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     val user: User,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "festival_id")
-    val festival: Festival
+    @JoinColumn(name = "place_id")
+    val place: Place,
 
-): BaseEntity() {
+) {
+
 }

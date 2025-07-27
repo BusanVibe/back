@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 
 @RestControllerAdvice(annotations = [RestController::class])
@@ -47,6 +48,45 @@ class ExceptionAdvice : ResponseEntityExceptionHandler() {
         }
 
         return handleExceptionInternalArgs(ex, HttpHeaders.EMPTY, ErrorStatus.BAD_REQUEST, request, errors)
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleMethodArgumentTypeMismatch(
+        e: MethodArgumentTypeMismatchException,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        val paramName = e.name
+        val invalidValue = e.value
+        val requiredType = e.requiredType
+
+        val errorMessage = when {
+            requiredType?.isEnum == true -> {
+                val enumValues = requiredType.enumConstants.joinToString(", ")
+                "잘못된 enum 값입니다. [$paramName=$invalidValue], 가능한 값: [$enumValues]"
+            }
+            requiredType == Long::class.java || requiredType == Int::class.java -> {
+                "숫자 타입 파라미터가 잘못되었습니다. [$paramName=$invalidValue]"
+            }
+            requiredType == java.time.LocalDateTime::class.java -> {
+                "날짜/시간 형식이 잘못되었습니다. [$paramName=$invalidValue], 예: 2024-01-01T12:00:00"
+            }
+            requiredType == java.time.LocalDate::class.java -> {
+                "날짜 형식이 잘못되었습니다. [$paramName=$invalidValue], 예: 2024-01-01"
+            }
+            else -> {
+                "요청 파라미터 타입이 잘못되었습니다. [$paramName=$invalidValue], 기대 타입: ${requiredType?.simpleName ?: "알 수 없음"}"
+            }
+        }
+
+        val errorArgs = mapOf(paramName to errorMessage)
+
+        return handleExceptionInternalArgs(
+            e,
+            HttpHeaders.EMPTY,
+            ErrorStatus.BAD_REQUEST,
+            request,
+            errorArgs
+        )
     }
 
     @ExceptionHandler
