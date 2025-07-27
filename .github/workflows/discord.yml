@@ -2,30 +2,23 @@ name: Notify Discord on PR Merge to main
 
 on:
   pull_request:
-    types: [closed]  # PR 종료 이벤트
+    types: [closed]
 
 jobs:
   notify-discord:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Get commits of merged PR
         id: get_commits
         run: |
-          # PR 번호
           PR_NUM=${{ github.event.pull_request.number }}
 
-          echo "Fetching commits for PR #$PR_NUM"
-          # GitHub API로 PR 커밋 목록 가져오기
           COMMITS_JSON=$(curl -sSL \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUM/commits")
 
-          # jq로 커밋 해시, 작성자, 메시지를 파싱해서 구분자 | 로 한 줄씩 만듦
           COMMITS=$(echo "$COMMITS_JSON" | jq -r '.[] | "\(.sha[0:7])|\(.commit.author.name)|\(.commit.message | split("\n")[0])"')
 
           echo "commits<<EOF" >> $GITHUB_OUTPUT
@@ -53,15 +46,13 @@ jobs:
             message+="- [$hash]($url) $emoji $subject\n"
           done <<< "$commits"
 
-          echo "message=$message" >> $GITHUB_OUTPUT
+          echo "message<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$message" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Send Discord webhook
-        uses: bbhoss/webhook-dispatch@v1
-        with:
-          url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          method: POST
-          contentType: application/json
-          body: |
-            {
-              "content": "${{ steps.build_message.outputs.message }}"
-            }
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"${{ steps.build_message.outputs.message }}\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
