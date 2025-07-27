@@ -1,4 +1,4 @@
-name: Notify Discord on PR Merge to Main
+name: Notify Discord on PR merge to main
 
 on:
   pull_request:
@@ -10,32 +10,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Get merged commits
+      - name: Get PR commits messages
         id: get_commits
         run: |
-          # PR 머지 커밋 리스트를 가져옵니다.
-          # github.event.pull_request.commits 는 커밋 개수이므로 커밋 SHA 목록은 API 호출 필요
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          REPO=${{ github.repository }}
+          echo "Fetching commits for PR #${{ github.event.pull_request.number }}"
           
-          # GitHub API로 PR 커밋 목록을 가져와서 메시지만 뽑기
-          COMMITS=$(curl -sSL -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/commits" | jq -r '.[].commit.message')
+          response=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/commits")
           
-          # 여러 줄인 커밋 메시지를 한 줄로 바꾸기 (디스코드 메시지 용)
-          echo "::set-output name=messages::$(echo "$COMMITS" | jq -Rs .)"
+          echo "$response" | jq -r '.[] | "- " + .commit.message' > commit_messages.txt
+          
+          # commit_messages 출력을 한 변수에 담기 위해 join
+          commit_messages=$(paste -sd '\n' commit_messages.txt)
+          
+          echo "commit_messages<<EOF" >> $GITHUB_OUTPUT
+          echo "$commit_messages" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Send Discord Webhook
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          method: POST
-          contentType: application/json
-          body: |
-            {
-              "content": "PR #${{ github.event.pull_request.number }} merged into main.\n커밋 메시지:\n${{ steps.get_commits.outputs.messages }}"
-            }
+      - name: Send Discord webhook notification
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d "{\"content\":\":tada: PR #${{ github.event.pull_request.number }} merged into main!\n**Title:** ${{ github.event.pull_request.title }}\n**Author:** ${{ github.event.pull_request.user.login }}\n**Commits:**\n${{ steps.get_commits.outputs.commit_messages }}\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}
