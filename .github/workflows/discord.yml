@@ -8,51 +8,43 @@ jobs:
   notify-discord:
     if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
     runs-on: ubuntu-latest
-    steps:
-      - name: Get commits of merged PR
-        id: get_commits
-        run: |
-          PR_NUM=${{ github.event.pull_request.number }}
 
+    env:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      # 개인 토큰 필요 시 아래 주석 해제 후 secrets에 등록
+      # GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+    steps:
+      - name: Get PR number
+        run: echo "PR_NUM=${{ github.event.pull_request.number }}" >> $GITHUB_ENV
+
+      - name: Fetch commits for PR
+        id: fetch_commits
+        run: |
           COMMITS_JSON=$(curl -sSL \
             -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/pulls/$PR_NUM/commits")
+            -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ env.PR_NUM }}/commits")
 
-          COMMITS=$(echo "$COMMITS_JSON" | jq -r '.[] | "\(.sha[0:7])|\(.commit.author.name)|\(.commit.message | split("\n")[0])"')
+          echo "$COMMITS_JSON" > commits.json
 
-          echo "commits<<EOF" >> $GITHUB_OUTPUT
-          echo "$COMMITS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          # 커밋 리스트 메시지 생성 (3개 제한, 링크 포함)
+          COMMITS_MSG=$(echo "$COMMITS_JSON" | jq -r '[.[] | {sha: .sha[:7], url: .html_url, message: .commit.message}] | .[:3] | map("- [\(.sha)](\(.url)) \(.message)") | join("\n")')
 
-      - name: Build Discord message
-        id: build_message
+          echo "COMMITS_MSG<<EOF" >> $GITHUB_ENV
+          echo "$COMMITS_MSG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Send Discord notification
         run: |
-          commits="${{ steps.get_commits.outputs.commits }}"
-          message="🚀 **PR #${{ github.event.pull_request.number }} 머지 완료** (main 브랜치)\n\n"
-          message+="머지한 사람: @${{ github.actor }}  \n"
-          count=$(echo "$commits" | wc -l)
-          message+="커밋 $count 개 포함  \n"
-          message+="머지 시간: $(date '+%Y-%m-%d %H:%M')\n\n"
-          message+="커밋 내역:\n"
+          USERNAME="${{ github.actor }}"
+          NOW=$(date '+%Y-%m-%d %H:%M')
 
-          while IFS='|' read -r hash author subject; do
-            url="https://github.com/${{ github.repository }}/commit/$hash"
-            emoji="⚙️"
-            if echo "$subject" | grep -iq "fix"; then emoji="🐛"; fi
-            if echo "$subject" | grep -iq "add\|feat"; then emoji="✨"; fi
-            if echo "$subject" | grep -iq "breaking\|migrate"; then emoji="⚠️"; fi
+          CONTENT="🚀 **배포 완료** (main 브랜치)\n\n배포자: @$USERNAME\n커밋 ${#COMMITS_MSG[@]}개 포함\n배포 시간: $NOW\n\n커밋 내역:\n$COMMITS_MSG"
 
-            message+="- [$hash]($url) $emoji $subject\n"
-          done <<< "$commits"
-
-          echo "message<<EOF" >> $GITHUB_OUTPUT
-          echo -e "$message" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Send Discord webhook
-        run: |
           curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{\"content\": \"${{ steps.build_message.outputs.message }}\"}" \
-               ${{ secrets.DISCORD_WEBHOOK_URL }}
+            -X POST \
+            -d "{\"content\": \"$CONTENT\"}" \
+            "$DISCORD_WEBHOOK_URL"
+        env:
+          COMMITS_MSG: ${{ env.COMMITS_MSG }}
