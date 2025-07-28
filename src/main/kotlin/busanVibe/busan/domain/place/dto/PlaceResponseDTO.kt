@@ -28,17 +28,17 @@ class PlaceResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     sealed class PlaceDetailsDto {
-        abstract val id: Long
+        abstract val id: Long?
 
         abstract val name: String
 
         abstract val type: String
 
-        abstract val img: String
+        abstract val img: String?
 
         abstract val congestionLevel: Int
 
-        abstract val grade: Double
+        abstract val grade: Float?
 
         abstract val reviewAmount: Int
 
@@ -50,35 +50,39 @@ class PlaceResponseDTO {
 
         abstract val phone: String
 
+        abstract val isLike: Boolean
+
         @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
         data class SightDto(
-            override val id: Long,
+            override val id: Long?,
             override val name: String,
             override val type: String,
-            override val img: String,
+            override val img: String?,
             override val congestionLevel: Int,
-            override val grade: Double,
+            override val grade: Float?,
             override val reviewAmount: Int,
             override val likeAmount: Int,
             override val isOpen: Boolean,
             override val address: String,
             override val phone: String,
+            override val isLike: Boolean,
             val introduce: String
         ) : PlaceDetailsDto()
 
         @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
         data class RestaurantDto(
-            override val id: Long,
+            override val id: Long?,
             override val name: String,
             override val type: String,
-            override val img: String,
+            override val img: String?,
             override val congestionLevel: Int,
-            override val grade: Double,
+            override val grade: Float?,
             override val reviewAmount: Int,
             override val likeAmount: Int,
             override val isOpen: Boolean,
             override val address: String,
             override val phone: String,
+            override val isLike: Boolean,
             val monOpen: String,
             val tueOpen: String,
             val wedOpen: String,
@@ -99,9 +103,9 @@ class PlaceResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class ReviewDto(
-        val usrImg: String,
+        val usrImg: String?,
         val usrName: String,
-        val grade: Double,
+        val grade: Float,
         val date: String,
         val content: String
     )

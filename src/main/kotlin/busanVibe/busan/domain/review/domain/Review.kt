@@ -2,6 +2,7 @@ package busanVibe.busan.domain.review.domain
 
 import busanVibe.busan.domain.common.BaseEntity
 import busanVibe.busan.domain.place.domain.Place
+import busanVibe.busan.domain.user.data.User
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -27,6 +28,10 @@ class Review (
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id", nullable = false)
     val place: Place,
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    val user: User,
 
     ): BaseEntity(){
 

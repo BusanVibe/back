@@ -16,5 +16,13 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     )
     fun findByType(@Param("type")type: PlaceType): List<Place>
 
+    @Query(
+        """
+            SELECT p FROM Place p
+            JOIN FETCH p.openTime
+            WHERE p.id = :placeId
+        """
+    )
+    fun findPlaceForDetails(@Param("placeId") placeId: Long): Place?
 
 }

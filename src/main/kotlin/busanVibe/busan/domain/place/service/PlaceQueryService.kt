@@ -1,26 +1,41 @@
 package busanVibe.busan.domain.place.service
 
+import busanVibe.busan.domain.place.converter.PlaceDetailsConverter
 import busanVibe.busan.domain.place.domain.Place
+import busanVibe.busan.domain.place.domain.PlaceImage
 import busanVibe.busan.domain.place.domain.PlaceLike
 import busanVibe.busan.domain.place.dto.PlaceResponseDTO
 import busanVibe.busan.domain.place.enums.PlaceSortType
 import busanVibe.busan.domain.place.enums.PlaceType
+import busanVibe.busan.domain.place.repository.OpenTimeRepository
 import busanVibe.busan.domain.place.repository.PlaceImageRepository
 import busanVibe.busan.domain.place.repository.PlaceLikeRepository
 import busanVibe.busan.domain.place.repository.PlaceRepository
+import busanVibe.busan.domain.review.domain.Review
+import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.domain.user.data.User
 import busanVibe.busan.domain.user.service.login.AuthService
+import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
+import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
+import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.String
 
 @Service
 class PlaceQueryService(
     private val placeRepository: PlaceRepository,
     private val placeLikeRepository: PlaceLikeRepository,
     private val placeImageRepository: PlaceImageRepository,
+    private val reviewRepository: ReviewRepository,
     private val redisTemplate: StringRedisTemplate,
+    private val openTimeRepository: OpenTimeRepository,
 ) {
+
+    private val redisUtil = PlaceRedisUtil(redisTemplate)
+    private val placeDetailsConverter = PlaceDetailsConverter(redisUtil)
+    private val log = LoggerFactory.getLogger(PlaceQueryService::class.java)
 
     @Transactional(readOnly = true)
     fun getPlaceList(category: PlaceType?, sort: PlaceSortType?): PlaceResponseDTO.PlaceListDto {
@@ -56,7 +71,8 @@ class PlaceQueryService(
             .associateBy({ it.place.id!! }, { it.imgUrl })
 
         // 혼잡도 조회
-        val congestionMap: Map<Long, Int> = placeIdList.associateWith { getRedisCongestion(it) }
+        val placeRedisUtil = PlaceRedisUtil(redisTemplate)
+        val congestionMap: Map<Long, Int> = placeIdList.associateWith { placeRedisUtil.getRedisCongestion(it) }
 
         // DTO 변환
         val dtoList: List<PlaceResponseDTO.PlaceListInfoDto> = placeList.map { place ->
@@ -84,17 +100,50 @@ class PlaceQueryService(
         return PlaceResponseDTO.PlaceListDto(sortedList)
     }
 
+    @Transactional(readOnly = true)
+    fun getPlaceDetails(placeId: Long): PlaceResponseDTO.PlaceDetailsDto {
 
-    // 임의로 혼잡도 생성하여 반환. 레디스 키 값으로 저장함.
-    private fun getRedisCongestion(placeId: Long?): Int{
+        val currentUser: User = AuthService().getCurrentUser()
 
-        val key = "place:congestion:$placeId"
-        val randomCongestion: Int = (Math.random() * 5 + 1).toInt()
+        // 관광지일 때는 요일별 오픈시간도 같이 조회
+        val place: Place? = placeRepository.findPlaceForDetails(placeId)
+        place ?: throw ExceptionHandler(ErrorStatus.PLACE_NOT_FOUND)
 
-        redisTemplate.opsForValue()
-            .set(key, randomCongestion.toString())
+        // 필요한 연관관계 객체 리스트 추출
+        log.info("장소 좋아요 조회")
+        val placeLikes: List<PlaceLike> = placeLikeRepository.findByPlace(place)
+        log.info("장소 리뷰 조회")
+        val placeReviews: List<Review> = reviewRepository.findForDetails(place) // 리뷰랑 작성자 Fetch Join
+        log.info("장소 이미지 조회")
+        val placeImages: List<PlaceImage> = placeImageRepository.findByPlace(place)
+//        log.info("장소 오픈타임 조회")
+//        val placeOpenTime: OpenTime? = openTimeRepository.findByPlace(place)
 
-        return randomCongestion
+        // 좋아요 여부 구함
+        val isLike = placeLikes.any { it.user.id == currentUser.id }
+
+        if(place.type == PlaceType.SIGHT){
+            println("여기1")
+            return placeDetailsConverter.toSightDto(
+                place = place,
+                placeLikes = placeLikes,
+                placeReviews = placeReviews,
+                placeImages = placeImages,
+                isLike
+            )
+        }
+        else{
+            println("여기2")
+            return placeDetailsConverter.toRestaurantDto(
+                place = place,
+                placeLikes = placeLikes,
+                placeReviews = placeReviews,
+                placeImages = placeImages,
+                placeOpenTime = place.openTime,
+                isLike
+            )
+        }
+
     }
 
 

@@ -30,7 +30,7 @@ class User(
      var email: String?,
 
     @Column(nullable = false, length = 50)
-     var nickname: String?,
+     var nickname: String,
 
     @Column(nullable = true, length = 255)
      var profileImageUrl: String?,

@@ -34,9 +34,8 @@ class PlaceController(
     @Operation(summary = "명소 상세 조회")
     fun getPlaceDetails(@PathVariable("placeId") placeId: Long) : ApiResponse<PlaceResponseDTO.PlaceDetailsDto>?
     {
-
-        return null;
+        val placeDetail: PlaceResponseDTO.PlaceDetailsDto = placeQueryService.getPlaceDetails(placeId)
+        return ApiResponse.onSuccess(placeDetail)
     }
-
 
 }
