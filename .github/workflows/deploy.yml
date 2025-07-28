@@ -42,6 +42,7 @@ jobs:
           script: |
             cd /home/ubuntu/app
             docker-compose down
+            docker rm -f redis || true
             docker rmi ggamnunq/busan || true
             docker image prune -f
             docker pull ggamnunq/busan
