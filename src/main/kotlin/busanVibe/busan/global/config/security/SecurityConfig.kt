@@ -32,7 +32,7 @@ class SecurityConfig {
         http.formLogin { it.disable() }
             .httpBasic { it.disable() }
             .csrf { it.disable() }
-            .cors { it.configurationSource { CorsConfiguration() } }
+            .cors { it.configurationSource(corsConfigurationSource()) }
             .headers { it.frameOptions { it.disable() } }
             .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
@@ -60,23 +60,16 @@ class SecurityConfig {
 
         configuration.setAllowedOriginPatterns(
             listOf(
-                "http://localhost:5173/",
-                "http://localhost:8080/",
-                "https://busanvibe.site/",
-                "https://*.busanvibe.site/",
+                "http://localhost:5173",
+                "http://localhost:8080",
+                "https://busanvibe.site",
+                "https://*.busanvibe.site",
 
             )
         )
 
         configuration.allowedHeaders = listOf("*")
-        configuration.allowedMethods = listOf(
-            HttpMethod.GET.name(),
-            HttpMethod.POST.name(),
-            HttpMethod.PUT.name(),
-            HttpMethod.DELETE.name(),
-            HttpMethod.OPTIONS.name(),
-            HttpMethod.PATCH.name()
-        )
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowCredentials = true
         configuration.maxAge = 3600L
 
