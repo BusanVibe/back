@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface PlaceLikeRepository: JpaRepository<PlaceLike, Long> {
     fun findAllByPlaceIn(placeList: List<Place>): List<PlaceLike>
-
+    fun findByPlace(place: Place): List<PlaceLike>
 }

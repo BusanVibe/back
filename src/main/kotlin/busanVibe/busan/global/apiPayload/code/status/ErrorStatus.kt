@@ -21,6 +21,9 @@ enum class ErrorStatus(
     // 사용자 관련 에러
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4004", "유저를 찾을 수 없습니다."),
 
+    // 명소 관련 에러
+    PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE4004", "명소를 찾을 수 없습니다."),
+
     // 인증 관련 에러
     AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "AUTH4010", "인증에 실패했습니다.");
 

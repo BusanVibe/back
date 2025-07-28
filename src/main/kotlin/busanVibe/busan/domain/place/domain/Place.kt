@@ -2,7 +2,6 @@ package busanVibe.busan.domain.place.domain
 
 import busanVibe.busan.domain.common.BaseEntity
 import busanVibe.busan.domain.place.enums.PlaceType
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -11,9 +10,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
+import jakarta.persistence.OneToOne
 import java.math.BigDecimal
 
 @Entity
@@ -44,10 +41,20 @@ class Place(
     @Column(nullable = false, length = 20)
     val phone: String,
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "region_id", nullable = false)
-    val region: Region,
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "region_id", nullable = false)
+//    val region: Region,
+//
+//    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+//    val reviews: List<Review> = emptyList(),
+//
+//    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+//    val placeLikes: List<PlaceLike> = emptyList(),
+//
+    @OneToOne(mappedBy = "place", fetch = FetchType.LAZY)
+    val openTime: OpenTime,
+//
+//    @OneToMany(mappedBy="place", fetch = FetchType.LAZY)
+//    val images: List<PlaceImage> = emptyList(),
 
-    @OneToMany(mappedBy = "place", cascade = [CascadeType.ALL])
-    val openTimes: MutableSet<OpenTime> = HashSet()
 ) : BaseEntity()
