@@ -2,6 +2,7 @@ package busanVibe.busan.domain.place.controller
 
 import busanVibe.busan.domain.place.dto.PlaceMapResponseDTO
 import busanVibe.busan.domain.place.enums.PlaceType
+import busanVibe.busan.domain.place.service.PlaceCongestionQueryService
 import busanVibe.busan.global.apiPayload.exception.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
 import org.springframework.web.bind.annotation.GetMapping
@@ -12,16 +13,19 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/congestion")
-class PlaceCongestionController {
+class PlaceCongestionController (
+    private val placeCongestionQueryService: PlaceCongestionQueryService,
+){
 
     @GetMapping
     @Operation(summary = "지도 조회")
     fun map(
-        @RequestParam("type", required = false) type: PlaceType,
+        @RequestParam("type", required = false, defaultValue = "ALL") type: PlaceType,
         @RequestParam("latitude")latitude: Double,
-        @RequestParam("longtitude")longtitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>?{
+        @RequestParam("longitude")longtitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>?{
 
-        return null;
+        val places = placeCongestionQueryService.getMap(type, latitude, longtitude)
+        return ApiResponse.onSuccess(places);
     }
 
     @GetMapping("/place/{placeId}")

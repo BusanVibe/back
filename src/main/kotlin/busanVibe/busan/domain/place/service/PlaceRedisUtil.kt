@@ -1,7 +1,10 @@
 package busanVibe.busan.domain.place.service
 
 import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.stereotype.Component
 
+
+@Component
 class PlaceRedisUtil(
     private val redisTemplate: StringRedisTemplate
 ) {
