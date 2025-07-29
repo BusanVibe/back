@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface FestivalRepository: JpaRepository<Festival, String> {
+interface FestivalRepository: JpaRepository<Festival, Long> {
 
     @Query(
 """
@@ -14,5 +14,14 @@ interface FestivalRepository: JpaRepository<Festival, String> {
         WHERE f.status = :status 
         """)
     fun getFestivalList(@Param("status") status: FestivalStatus): List<Festival>
+
+    @Query("""
+        SELECT f FROM Festival f
+        LEFT JOIN FETCH f.festivalLikes
+        LEFT JOIN FETCH f.festivalImages
+        WHERE f.id = :id
+    """)
+    fun findByIdWithLikesAndImages(@Param("id") id: Long): Festival?
+
 
 }

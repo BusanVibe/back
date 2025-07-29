@@ -3,6 +3,7 @@ package busanVibe.busan.domain.festival.service
 import busanVibe.busan.domain.festival.converter.FestivalConverter
 import busanVibe.busan.domain.festival.domain.Festival
 import busanVibe.busan.domain.festival.domain.FestivalLike
+import busanVibe.busan.domain.festival.dto.FestivalDetailsDTO
 import busanVibe.busan.domain.festival.dto.FestivalListResponseDTO
 import busanVibe.busan.domain.festival.enums.FestivalSortType
 import busanVibe.busan.domain.festival.enums.FestivalStatus
@@ -11,6 +12,9 @@ import busanVibe.busan.domain.festival.repository.FestivalLikesRepository
 import busanVibe.busan.domain.festival.repository.FestivalRepository
 import busanVibe.busan.domain.user.data.User
 import busanVibe.busan.domain.user.service.login.AuthService
+import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
+import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,6 +24,8 @@ class FestivalQueryService(
     private val festivalImageRepository: FestivalImageRepository,
     private val festivalLikesRepository: FestivalLikesRepository
 ) {
+
+    val log = LoggerFactory.getLogger(FestivalQueryService::class.java)
 
     @Transactional(readOnly = true)
     fun getFestivalList(sort: FestivalSortType?, status: FestivalStatus?): FestivalListResponseDTO.ListDto{
@@ -77,6 +83,45 @@ class FestivalQueryService(
         }
 
         return FestivalListResponseDTO.ListDto(sortedList)
+    }
+
+    fun getFestivalDetails(festivalId: Long):FestivalDetailsDTO.DetailDto{
+
+        // Festival -> id, name, startDate, endDate, place, introduction
+        // FestivalLike -> count, isLike
+        // FestivalImage -> img
+
+        // user 추출
+        val currentUser: User = AuthService().getCurrentUser()
+
+        // 축제 조회
+        val festival: Festival? = festivalRepository.findByIdWithLikesAndImages(festivalId)
+
+        // 검증
+        festival ?: throw ExceptionHandler(ErrorStatus.FESTIVAL_NOT_FOUND)
+
+        // 이미지 조회
+        val imgUrlSet: Set<String> = festival.festivalImages
+            .map { it.imgUrl }
+            .toSet()
+
+        // 좋아요 조회
+        val likeList: Set<FestivalLike> = festival.festivalLikes
+
+        return FestivalDetailsDTO.DetailDto(
+            id = festivalId,
+            img = imgUrlSet,
+            name = festival.name,
+            likeCount = likeList.size,
+            isLike = likeList.any { it.user.id == currentUser.id },
+            startDate = FestivalConverter().convertFestivalDate(festival.startDate),
+            endDate = FestivalConverter().convertFestivalDate(festival.endDate),
+            region = festival.place,
+            fee = festival.fee,
+            siteUrl = festival.siteUrl,
+            introduce = festival.introduction,
+            phone = festival.phone,
+        )
     }
 
 }

@@ -21,7 +21,7 @@ class FestivalConverter {
         )
     }
 
-    private fun convertFestivalDate(date: Date): String {
+    public fun convertFestivalDate(date: Date): String {
         val formatter: SimpleDateFormat = SimpleDateFormat("yyyy.MM.dd")
         return formatter.format(date)
     }
