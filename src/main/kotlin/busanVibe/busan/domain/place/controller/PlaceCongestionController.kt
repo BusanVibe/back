@@ -5,12 +5,14 @@ import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.service.PlaceCongestionQueryService
 import busanVibe.busan.global.apiPayload.exception.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
+@Tag(name = "혼잡도+지도 관련 API")
 @RestController
 @RequestMapping("/api/congestion")
 class PlaceCongestionController (
