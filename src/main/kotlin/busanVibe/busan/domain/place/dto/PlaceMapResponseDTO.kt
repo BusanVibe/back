@@ -3,6 +3,7 @@ package busanVibe.busan.domain.place.dto
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
+import java.math.BigDecimal
 
 
 class PlaceMapResponseDTO {
@@ -14,23 +15,23 @@ class PlaceMapResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class PlaceMapInfoDto(
-        val placeId: Long,
+        val placeId: Long?,
         val name: String,
         val type: String,
-        val congestionLevel: Integer,
-        val latitude: Double,
-        val longitude: Double
+        val congestionLevel: Int,
+        val latitude: BigDecimal,
+        val longitude: BigDecimal
     )
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class PlaceDefaultInfoDto(
-        val id: Long,
+        val id: Long?,
         val name: String,
-        val congestionLevel: Integer,
+        val congestionLevel: Int,
         val grade: Float,
-        val reviewAmount: Integer,
-        val latitude: Double,
-        val longitude: Double,
+        val reviewAmount: Int,
+        val latitude: BigDecimal,
+        val longitude: BigDecimal,
         val address: String,
         @get:JsonProperty("is_open")
         val isOpen: Boolean,
@@ -39,8 +40,8 @@ class PlaceMapResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class PlaceCongestionDto(
-        val standardTime: String,
-        val realTimeCongestionLevel: Integer,
+        val standardTime: Int,
+        val realTimeCongestionLevel: Int,
         val byTimePercent: List<Float>
     )
 

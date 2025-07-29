@@ -2,6 +2,7 @@ package busanVibe.busan.domain.place.domain
 
 import busanVibe.busan.domain.common.BaseEntity
 import busanVibe.busan.domain.place.enums.PlaceType
+import busanVibe.busan.domain.review.domain.Review
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -46,8 +47,8 @@ class Place(
 //    @JoinColumn(name = "region_id", nullable = false)
 //    val region: Region,
 //
-//    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
-//    val reviews: List<Review> = emptyList(),
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+    val reviews: List<Review>,
 
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
     val placeLikes: Set<PlaceLike>,

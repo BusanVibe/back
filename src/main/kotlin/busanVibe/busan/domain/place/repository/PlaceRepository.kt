@@ -5,6 +5,7 @@ import busanVibe.busan.domain.place.enums.PlaceType
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import java.math.BigDecimal
 
 interface PlaceRepository: JpaRepository<Place, Long> {
 
@@ -27,5 +28,33 @@ interface PlaceRepository: JpaRepository<Place, Long> {
         """
     )
     fun findByIdWithLIkeAndImage(@Param("placeId") placeId: Long): Place?
+
+    // ALL 이면 검사 안 함
+    @Query(
+    """
+            SELECT p FROM Place p
+            LEFT JOIN FETCH p.openTime
+                    WHERE p.latitude BETWEEN :minLat AND :maxLat
+                      AND p.longitude BETWEEN :minLng AND :maxLng
+                      AND (:#{#type.name() == 'ALL'} = true OR p.type = :type)
+          """
+    )
+    fun findPlacesByLocationAndType(
+        @Param("minLat") minLat: BigDecimal,
+        @Param("maxLat") maxLat: BigDecimal,
+        @Param("minLng") minLng: BigDecimal,
+        @Param("maxLng") maxLng: BigDecimal,
+        @Param("type") type: PlaceType?
+    ): List<Place>
+
+    @Query(
+        """
+            SELECT p FROM Place p
+            LEFT JOIN FETCH p.openTime
+            LEFT JOIN FETCH p.placeImages
+            WHERE p.id = :placeId
+        """
+    )
+    fun findByIdWithReviewAndImage(@Param("placeId") placeId: Long): Place?
 
 }
