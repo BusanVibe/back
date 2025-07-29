@@ -33,12 +33,11 @@ class FestivalController(
     @GetMapping("/{festivalId}")
     @Operation(summary = "지역축제 상세 조회")
     fun festivalDetails(
-        @PathVariable("festivalId") festivalId: Long,
-        @RequestParam("sort") sort: FestivalSortType,
-        @RequestParam("status")status: FestivalStatus
-    ):ApiResponse<FestivalDetailsDTO.DetailDto>?{
+        @PathVariable("festivalId") festivalId: Long
+    ):ApiResponse<FestivalDetailsDTO.DetailDto>{
 
-        return null;
+        val festivalDetails = festivalQueryService.getFestivalDetails(festivalId)
+        return ApiResponse.onSuccess(festivalDetails);
     }
 
 }

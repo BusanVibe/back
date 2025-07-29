@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface FestivalLikesRepository: JpaRepository<FestivalLike, String> {
 
     fun findAllByFestivalIn(festivalList: List<Festival>): List<FestivalLike>
+    fun findAllByFestivalIn(festivalList: Set<Festival>): List<FestivalLike>
+
 
 }

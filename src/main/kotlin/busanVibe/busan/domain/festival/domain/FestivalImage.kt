@@ -21,7 +21,7 @@ class FestivalImage(
     val imgUrl : String,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "festival_id")
     val festival: Festival
 
 ): BaseEntity() {

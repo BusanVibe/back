@@ -1,5 +1,6 @@
 package busanVibe.busan.domain.festival.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 
@@ -8,15 +9,17 @@ class FestivalDetailsDTO {
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class DetailDto(
         val id: Long,
-        val img: String,
+        val img: Set<String>,
         val name: String,
-        val likeCount: Integer,
+        val likeCount: Int,
+        @get:JsonProperty("is_like")
         val isLike: Boolean,
         val startDate: String,
         val endDate: String,
         val region: String,
         val phone: String,
-        val fee: Integer,
+        val fee: Int,
+        val siteUrl: String,
         val introduce: String
     )
 

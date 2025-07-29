@@ -1,5 +1,6 @@
 package busanVibe.busan.domain.place.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 
@@ -17,6 +18,7 @@ class PlaceResponseDTO {
         val placeId: Long?,
         val name: String,
         val congestionLevel: Int,
+        @get:JsonProperty("is_like")
         val isLike: Boolean,
         val likeAmount: Int,
         val type: String,
@@ -34,7 +36,7 @@ class PlaceResponseDTO {
 
         abstract val type: String
 
-        abstract val img: String?
+        abstract val img: List<String>?
 
         abstract val congestionLevel: Int
 
@@ -44,12 +46,14 @@ class PlaceResponseDTO {
 
         abstract val likeAmount: Int
 
+        @get:JsonProperty("is_open")
         abstract val isOpen: Boolean
 
         abstract val address: String
 
         abstract val phone: String
 
+        @get:JsonProperty("is_like")
         abstract val isLike: Boolean
 
         @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
@@ -57,14 +61,16 @@ class PlaceResponseDTO {
             override val id: Long?,
             override val name: String,
             override val type: String,
-            override val img: String?,
+            override val img: List<String>,
             override val congestionLevel: Int,
             override val grade: Float?,
             override val reviewAmount: Int,
             override val likeAmount: Int,
+            @get:JsonProperty("is_open")
             override val isOpen: Boolean,
             override val address: String,
             override val phone: String,
+            @get:JsonProperty("is_like")
             override val isLike: Boolean,
             val introduce: String
         ) : PlaceDetailsDto()
@@ -74,14 +80,16 @@ class PlaceResponseDTO {
             override val id: Long?,
             override val name: String,
             override val type: String,
-            override val img: String?,
+            override val img: List<String>,
             override val congestionLevel: Int,
             override val grade: Float?,
             override val reviewAmount: Int,
             override val likeAmount: Int,
+            @get:JsonProperty("is_open")
             override val isOpen: Boolean,
             override val address: String,
             override val phone: String,
+            @get:JsonProperty("is_like")
             override val isLike: Boolean,
             val monOpen: String,
             val tueOpen: String,

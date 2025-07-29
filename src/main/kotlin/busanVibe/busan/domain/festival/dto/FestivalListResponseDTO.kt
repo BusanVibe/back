@@ -1,5 +1,6 @@
 package busanVibe.busan.domain.festival.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 
@@ -18,6 +19,7 @@ class FestivalListResponseDTO {
         val startDate: String,
         val endDate: String,
         val region: String,
+        @get:JsonProperty("is_like")
         val isLike: Boolean,
         val likeCount: Int,
     )

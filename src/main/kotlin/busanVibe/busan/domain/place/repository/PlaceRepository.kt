@@ -19,10 +19,13 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     @Query(
         """
             SELECT p FROM Place p
-            JOIN FETCH p.openTime
+            LEFT JOIN FETCH p.placeLikes pl
+            LEFT JOIN FETCH pl.user
+            LEFT JOIN FETCH p.placeImages
+            LEFT JOIN FETCH p.openTime
             WHERE p.id = :placeId
         """
     )
-    fun findPlaceForDetails(@Param("placeId") placeId: Long): Place?
+    fun findByIdWithLIkeAndImage(@Param("placeId") placeId: Long): Place?
 
 }

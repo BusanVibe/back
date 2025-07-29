@@ -11,9 +11,9 @@ import lombok.Getter
 
 @Getter
 @AllArgsConstructor
-@JsonPropertyOrder("isSuccess", "code", "message", "result")
+@JsonPropertyOrder("is_success", "code", "message", "result")
 class ApiResponse<T>(
-    @JsonProperty("is_success")
+    @get:JsonProperty("is_success")
     val isSuccess: Boolean,
     val code: String,
     val message: String,

@@ -29,8 +29,8 @@ class PlaceDetailsConverter(
     ): PlaceResponseDTO.PlaceDetailsDto.SightDto = PlaceResponseDTO.PlaceDetailsDto.SightDto(
         id = place.id,
         name = place.name,
-        type = place.type.korean,
-        img = placeImages.firstOrNull()?.imgUrl,
+        type = place.type.capitalEnglish,
+        img = placeImages.map { it.imgUrl },
         congestionLevel = redisUtil.getRedisCongestion(place.id),
         grade = if (placeReviews.isNotEmpty()) {
             placeReviews.map { it.score }.average().toFloat()
@@ -57,8 +57,8 @@ class PlaceDetailsConverter(
     ): PlaceResponseDTO.PlaceDetailsDto.RestaurantDto = PlaceResponseDTO.PlaceDetailsDto.RestaurantDto(
         id = place.id,
         name = place.name,
-        type = place.type.korean,
-        img = placeImages.firstOrNull()?.imgUrl,
+        type = place.type.capitalEnglish,
+        img = placeImages.map { it.imgUrl },
         congestionLevel = redisUtil.getRedisCongestion(place.id),
         grade = placeReviews.map { it.score }.average().toFloat(),
         reviewAmount = placeReviews.size,
