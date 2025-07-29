@@ -21,7 +21,7 @@ class PlaceResponseDTO {
         val likeAmount: Int,
         val type: String,
         val address: String,
-        val img: String
+        val img: String?
     ){
 
     }

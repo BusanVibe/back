@@ -85,7 +85,7 @@ class PlaceQueryService(
                 likeAmount = likeCountMap[placeId] ?: 0,       // 전체 사용자 기준
                 type = place.type.korean,
                 address = place.address,
-                img = placeImages[placeId] ?: ""
+                img = placeImages[placeId]
             )
         }
 
