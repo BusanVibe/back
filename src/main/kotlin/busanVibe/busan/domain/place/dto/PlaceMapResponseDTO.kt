@@ -25,11 +25,11 @@ class PlaceMapResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class PlaceDefaultInfoDto(
-        val id: Long,
+        val id: Long?,
         val name: String,
-        val congestionLevel: Integer,
+        val congestionLevel: Int,
         val grade: Float,
-        val reviewAmount: Integer,
+        val reviewAmount: Int,
         val latitude: BigDecimal,
         val longitude: BigDecimal,
         val address: String,

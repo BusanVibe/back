@@ -47,4 +47,14 @@ interface PlaceRepository: JpaRepository<Place, Long> {
         @Param("type") type: PlaceType?
     ): List<Place>
 
+    @Query(
+        """
+            SELECT p FROM Place p
+            LEFT JOIN FETCH p.openTime
+            LEFT JOIN FETCH p.placeImages
+            WHERE p.id = :placeId
+        """
+    )
+    fun findByIdWithReviewAndImage(@Param("placeId") placeId: Long): Place?
+
 }

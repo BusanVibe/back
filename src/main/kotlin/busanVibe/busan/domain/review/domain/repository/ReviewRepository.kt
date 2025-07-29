@@ -2,6 +2,7 @@ package busanVibe.busan.domain.review.domain.repository
 
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.review.domain.Review
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -16,5 +17,8 @@ interface ReviewRepository: JpaRepository<Review, Long> {
         """
     )
     fun findForDetails(@Param("place")place: Place): List<Review>
+
+    @EntityGraph(attributePaths = ["user"])
+    fun findByPlace(place: Place): List<Review>
 
 }

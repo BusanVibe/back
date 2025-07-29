@@ -22,7 +22,7 @@ class PlaceCongestionController (
     fun map(
         @RequestParam("type", required = false, defaultValue = "ALL") type: PlaceType,
         @RequestParam("latitude")latitude: Double,
-        @RequestParam("longitude")longtitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>?{
+        @RequestParam("longitude")longtitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>{
 
         val places = placeCongestionQueryService.getMap(type, latitude, longtitude)
         return ApiResponse.onSuccess(places);
@@ -30,8 +30,10 @@ class PlaceCongestionController (
 
     @GetMapping("/place/{placeId}")
     @Operation(summary = "명소 기본 정보 조회")
-    fun placeDefaultInfo(@PathVariable("placeId") placeId: Long): ApiResponse<PlaceMapResponseDTO.PlaceDefaultInfoDto>?{
-        return null;
+    fun placeDefaultInfo(@PathVariable("placeId") placeId: Long): ApiResponse<PlaceMapResponseDTO.PlaceDefaultInfoDto>{
+
+        val place = placeCongestionQueryService.getPlaceDefault(placeId)
+        return ApiResponse.onSuccess(place)
     }
 
     @GetMapping("/place/{placeId}/read-time")

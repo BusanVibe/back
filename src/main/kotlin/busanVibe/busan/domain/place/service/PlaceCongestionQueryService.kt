@@ -1,8 +1,14 @@
 package busanVibe.busan.domain.place.service
 
+import busanVibe.busan.domain.place.domain.Place
+import busanVibe.busan.domain.place.domain.PlaceImage
 import busanVibe.busan.domain.place.dto.PlaceMapResponseDTO
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.repository.PlaceRepository
+import busanVibe.busan.domain.review.domain.Review
+import busanVibe.busan.domain.review.domain.repository.ReviewRepository
+import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
+import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
@@ -11,7 +17,8 @@ import java.math.RoundingMode
 @Service
 class PlaceCongestionQueryService(
     private val placeRepository: PlaceRepository,
-    private val placeRedisUtil: PlaceRedisUtil
+    private val placeRedisUtil: PlaceRedisUtil,
+    private val reviewRepository: ReviewRepository,
 ) {
 
     private val latitudeRange: Double = 0.05
@@ -45,6 +52,43 @@ class PlaceCongestionQueryService(
         }
 
         return PlaceMapResponseDTO.MapListDto(placeDtoList)
+    }
+
+    @Transactional(readOnly = true)
+    fun getPlaceDefault(placeId: Long): PlaceMapResponseDTO.PlaceDefaultInfoDto{
+
+        // Place -> name, imageList, address, openTime
+        // Review -> grade, count
+        // Image -> list
+        // Redis -> congestion
+
+        // 명소 조회
+        val place: Place? = placeRepository.findByIdWithReviewAndImage(placeId)
+        place?: throw ExceptionHandler(ErrorStatus.PLACE_NOT_FOUND)
+
+        // 이미지 조회
+        val placeImageSet: Set<PlaceImage> = place.placeImages
+        val placeImageList = placeImageSet.toList()
+            .sortedBy { it.createdAt }
+            .map { it.imgUrl }
+
+        // 리뷰 조회
+        val reviewSet: Set<Review> = reviewRepository.findByPlace(place).toSet()
+        val grade = reviewSet.map { it.score }.average().toFloat()
+
+
+        return PlaceMapResponseDTO.PlaceDefaultInfoDto(
+            id = place.id,
+            name = place.name,
+            congestionLevel = placeRedisUtil.getRedisCongestion(place.id),
+            grade = grade,
+            reviewAmount = reviewSet.size,
+            latitude = place.latitude,
+            longitude = place.longitude,
+            address = place.address,
+            isOpen = true,
+            imgList = placeImageList
+        )
     }
 
 }
