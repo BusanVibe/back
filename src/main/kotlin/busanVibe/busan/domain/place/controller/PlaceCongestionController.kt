@@ -36,12 +36,12 @@ class PlaceCongestionController (
         return ApiResponse.onSuccess(place)
     }
 
-    @GetMapping("/place/{placeId}/read-time")
+    @GetMapping("/place/{placeId}/real-time")
     @Operation(summary = "명소 실시간 혼잡도 조회")
     fun placeRealTimeCongestion(
-        @PathVariable("placeId") placeId: Long,
-        @RequestParam("standard-time") standardTime: Integer): ApiResponse<PlaceMapResponseDTO.PlaceCongestionDto>?{
-        return null;
+        @PathVariable("placeId") placeId: Long): ApiResponse<PlaceMapResponseDTO.PlaceCongestionDto>{
+        val congestion = placeCongestionQueryService.getCongestion(placeId)
+        return ApiResponse.onSuccess(congestion)
     }
 
     @GetMapping("/place/{placeId}/distribution")

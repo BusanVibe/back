@@ -9,10 +9,12 @@ import busanVibe.busan.domain.review.domain.Review
 import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDateTime
 
 @Service
 class PlaceCongestionQueryService(
@@ -23,6 +25,8 @@ class PlaceCongestionQueryService(
 
     private val latitudeRange: Double = 0.05
     private val longitudeRange: Double = 0.05
+
+    private val log = LoggerFactory.getLogger(PlaceCongestionQueryService::class.java)
 
     @Transactional(readOnly = true)
     fun getMap(type: PlaceType?, latitude: Double, longitude: Double): PlaceMapResponseDTO.MapListDto{
@@ -90,5 +94,38 @@ class PlaceCongestionQueryService(
             imgList = placeImageList
         )
     }
+
+    @Transactional(readOnly = true)
+    fun getCongestion(placeId: Long): PlaceMapResponseDTO.PlaceCongestionDto {
+
+        val current = LocalDateTime.now()
+        log.info("현재 시간: ${current}시")
+
+        val roundedBase = (current.hour / 3) * 3
+
+        // 최근 6개 3시간 단위 시간 생성 (기준시간 포함 총 7개)
+        val hours = (6 downTo 0).map { i -> (roundedBase - i * 3 + 24) % 24 }
+
+        log.info("배열 담기 시작")
+
+        val byTimePercent: List<Float> = hours.map { hour ->
+            val adjustedDateTime = current.withHour(hour)
+                .withMinute(0).withSecond(0).withNano(0)
+                .let {
+                    if (hour > current.hour) it.minusDays(1) else it
+                }
+            placeRedisUtil.getTimeCongestion(placeId, adjustedDateTime)
+        }
+
+        log.info("배열 담기 끝")
+
+        return PlaceMapResponseDTO.PlaceCongestionDto(
+            standardTime = roundedBase,
+            realTimeCongestionLevel = placeRedisUtil.getTimeCongestion(placeId, current).toInt(),
+            byTimePercent = byTimePercent
+        )
+    }
+
+
 
 }

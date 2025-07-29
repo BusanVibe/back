@@ -40,8 +40,8 @@ class PlaceMapResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class PlaceCongestionDto(
-        val standardTime: String,
-        val realTimeCongestionLevel: Integer,
+        val standardTime: Int,
+        val realTimeCongestionLevel: Int,
         val byTimePercent: List<Float>
     )
 
