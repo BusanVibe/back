@@ -30,7 +30,6 @@ class PlaceQueryService(
     private val placeImageRepository: PlaceImageRepository,
     private val reviewRepository: ReviewRepository,
     private val redisTemplate: StringRedisTemplate,
-    private val openTimeRepository: OpenTimeRepository,
 ) {
 
     private val redisUtil = PlaceRedisUtil(redisTemplate)
@@ -83,7 +82,7 @@ class PlaceQueryService(
                 congestionLevel = congestionMap[placeId] ?: 1,
                 isLike = userLikedPlaceIds.contains(placeId),  // 현재 로그인한 사용자 기준
                 likeAmount = likeCountMap[placeId] ?: 0,       // 전체 사용자 기준
-                type = place.type.korean,
+                type = place.type.capitalEnglish,
                 address = place.address,
                 img = placeImages[placeId]
             )
@@ -106,24 +105,22 @@ class PlaceQueryService(
         val currentUser: User = AuthService().getCurrentUser()
 
         // 관광지일 때는 요일별 오픈시간도 같이 조회
-        val place: Place? = placeRepository.findPlaceForDetails(placeId)
+        log.info(" 명소 + 이미지 + 좋아요 + 오픈시간 조회")
+        val place: Place? = placeRepository.findByIdWithLIkeAndImage(placeId)
+        // 검증
         place ?: throw ExceptionHandler(ErrorStatus.PLACE_NOT_FOUND)
 
         // 필요한 연관관계 객체 리스트 추출
-        log.info("장소 좋아요 조회")
-        val placeLikes: List<PlaceLike> = placeLikeRepository.findByPlace(place)
+        val placeLikes: List<PlaceLike> = place.placeLikes.toList()
+        val placeImages: List<PlaceImage> = place.placeImages.toList()
+
         log.info("장소 리뷰 조회")
-        val placeReviews: List<Review> = reviewRepository.findForDetails(place) // 리뷰랑 작성자 Fetch Join
-        log.info("장소 이미지 조회")
-        val placeImages: List<PlaceImage> = placeImageRepository.findByPlace(place)
-//        log.info("장소 오픈타임 조회")
-//        val placeOpenTime: OpenTime? = openTimeRepository.findByPlace(place)
+        val placeReviews: List<Review> = reviewRepository.findForDetails(place)
 
         // 좋아요 여부 구함
         val isLike = placeLikes.any { it.user.id == currentUser.id }
 
         if(place.type == PlaceType.SIGHT){
-            println("여기1")
             return placeDetailsConverter.toSightDto(
                 place = place,
                 placeLikes = placeLikes,
@@ -133,7 +130,6 @@ class PlaceQueryService(
             )
         }
         else{
-            println("여기2")
             return placeDetailsConverter.toRestaurantDto(
                 place = place,
                 placeLikes = placeLikes,

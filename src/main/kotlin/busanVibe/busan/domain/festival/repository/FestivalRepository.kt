@@ -15,17 +15,6 @@ interface FestivalRepository: JpaRepository<Festival, Long> {
         """)
     fun getFestivalList(@Param("status") status: FestivalStatus): List<Festival>
 
-
-    @Query(
-        """
-            SELECT f FROM Festival f
-            LEFT JOIN FETCH f.festivalLikes
-            LEFT JOIN FETCH f.festivalImages
-            WHERE f.status = :status
-        """
-    )
-    fun findByStatusWithLikesAndImages(@Param("status") status: FestivalStatus): Set<Festival>
-
     @Query("""
         SELECT f FROM Festival f
         LEFT JOIN FETCH f.festivalLikes

@@ -10,6 +10,7 @@ import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import java.math.BigDecimal
 
@@ -47,14 +48,14 @@ class Place(
 //
 //    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
 //    val reviews: List<Review> = emptyList(),
-//
-//    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
-//    val placeLikes: List<PlaceLike> = emptyList(),
-//
+
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
+    val placeLikes: Set<PlaceLike>,
+
     @OneToOne(mappedBy = "place", fetch = FetchType.LAZY)
     val openTime: OpenTime,
-//
-//    @OneToMany(mappedBy="place", fetch = FetchType.LAZY)
-//    val images: List<PlaceImage> = emptyList(),
+
+    @OneToMany(mappedBy="place", fetch = FetchType.LAZY)
+    val placeImages: Set<PlaceImage>
 
 ) : BaseEntity()

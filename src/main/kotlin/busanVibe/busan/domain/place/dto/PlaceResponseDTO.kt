@@ -34,7 +34,7 @@ class PlaceResponseDTO {
 
         abstract val type: String
 
-        abstract val img: String?
+        abstract val img: List<String>?
 
         abstract val congestionLevel: Int
 
@@ -57,7 +57,7 @@ class PlaceResponseDTO {
             override val id: Long?,
             override val name: String,
             override val type: String,
-            override val img: String?,
+            override val img: List<String>,
             override val congestionLevel: Int,
             override val grade: Float?,
             override val reviewAmount: Int,
@@ -74,7 +74,7 @@ class PlaceResponseDTO {
             override val id: Long?,
             override val name: String,
             override val type: String,
-            override val img: String?,
+            override val img: List<String>,
             override val congestionLevel: Int,
             override val grade: Float?,
             override val reviewAmount: Int,

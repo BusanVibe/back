@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface PlaceImageRepository: JpaRepository<PlaceImage, Long> {
 
-    fun findByPlace(place: Place): List<PlaceImage>
     fun findByPlaceIn(placeList: List<Place>): List<PlaceImage>
 
 }
