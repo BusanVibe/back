@@ -1,9 +1,11 @@
 package busanVibe.busan.global.apiPayload.code
 
-import busanVibe.busan.global.apiPayload.code.ErrorReasonDTO
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 import org.springframework.http.HttpStatus
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 class ErrorResponseDTO private constructor(
     httpStatus: HttpStatus,
     code: String,

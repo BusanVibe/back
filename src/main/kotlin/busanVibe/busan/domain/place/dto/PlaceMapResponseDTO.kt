@@ -1,5 +1,6 @@
 package busanVibe.busan.domain.place.dto
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 
@@ -31,6 +32,7 @@ class PlaceMapResponseDTO {
         val latitude: Double,
         val longitude: Double,
         val address: String,
+        @get:JsonProperty("is_open")
         val isOpen: Boolean,
         val imgList: List<String>
     )
