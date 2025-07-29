@@ -1,8 +1,11 @@
 package busanVibe.busan.domain.festival.domain
 
 import busanVibe.busan.domain.common.BaseEntity
+import busanVibe.busan.domain.festival.enums.FestivalStatus
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -28,7 +31,11 @@ class Festival (
     val place: String,
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    val introduction: String
+    val introduction: String,
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    val status: FestivalStatus,
 
     ): BaseEntity(){
 

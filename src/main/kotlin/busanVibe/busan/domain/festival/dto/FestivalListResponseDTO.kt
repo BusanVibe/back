@@ -14,11 +14,12 @@ class FestivalListResponseDTO {
     data class FestivalInfoDto(
         val festivalId: Long,
         val name: String,
-        val img: String,
+        val img: String?,
         val startDate: String,
         val endDate: String,
         val region: String,
-        val isLike: Boolean
+        val isLike: Boolean,
+        val likeCount: Int,
     )
 
 }
