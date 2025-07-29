@@ -78,8 +78,8 @@ class PlaceCongestionQueryService(
 
         // 리뷰 조회
         val reviewSet: Set<Review> = reviewRepository.findByPlace(place).toSet()
-        val grade = reviewSet.map { it.score }.average().toFloat()
-
+        val grade = if (reviewSet.isEmpty()) 0f 
+                    else reviewSet.map { it.score }.average().toFloat()
 
         return PlaceMapResponseDTO.PlaceDefaultInfoDto(
             id = place.id,
