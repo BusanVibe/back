@@ -47,9 +47,10 @@ class PlaceCongestionController (
     }
 
     @GetMapping("/place/{placeId}/distribution")
-    @Operation(summary = "명소 이용객 분포 조회")
+    @Operation(summary = "명소 이용객 분포 조회", description = "각 분포 항목의 백분율 정보를 반환합니다.")
     fun placeUsesDistribution(@PathVariable("placeId") placeId: Long): ApiResponse<PlaceMapResponseDTO.PlaceUserDistributionDto>?{
-        return null;
+        val distribution = placeCongestionQueryService.getDistribution(placeId)
+        return ApiResponse.onSuccess(distribution)
     }
 
 }

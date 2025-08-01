@@ -2,10 +2,12 @@ package busanVibe.busan.domain.place.repository
 
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.enums.PlaceType
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.math.BigDecimal
+import java.util.Optional
 
 interface PlaceRepository: JpaRepository<Place, Long> {
 
@@ -56,5 +58,10 @@ interface PlaceRepository: JpaRepository<Place, Long> {
         """
     )
     fun findByIdWithReviewAndImage(@Param("placeId") placeId: Long): Place?
+
+    @EntityGraph(attributePaths = ["visitorDistribution"])
+    @Query("SELECT p FROM Place p WHERE p.id = :placeId")
+    fun findWithDistribution(@Param("placeId") placeId: Long): Optional<Place>
+
 
 }

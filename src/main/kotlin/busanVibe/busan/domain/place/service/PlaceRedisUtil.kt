@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @Component
 class PlaceRedisUtil(
-    private val redisTemplate: StringRedisTemplate
+    private val redisTemplate: StringRedisTemplate,
 ) {
 
     private val log = LoggerFactory.getLogger("busanVibe.busan.domain.place")

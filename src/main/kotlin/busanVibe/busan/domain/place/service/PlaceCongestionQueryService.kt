@@ -2,9 +2,11 @@ package busanVibe.busan.domain.place.service
 
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.domain.PlaceImage
+import busanVibe.busan.domain.place.domain.VisitorDistribution
 import busanVibe.busan.domain.place.dto.PlaceMapResponseDTO
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.repository.PlaceRepository
+import busanVibe.busan.domain.place.repository.VisitorDistributionRepository
 import busanVibe.busan.domain.review.domain.Review
 import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
@@ -21,6 +23,7 @@ class PlaceCongestionQueryService(
     private val placeRepository: PlaceRepository,
     private val placeRedisUtil: PlaceRedisUtil,
     private val reviewRepository: ReviewRepository,
+    private val visitorDistributionRepository: VisitorDistributionRepository,
 ) {
 
     private val latitudeRange: Double = 0.05
@@ -124,6 +127,34 @@ class PlaceCongestionQueryService(
             realTimeCongestionLevel = placeRedisUtil.getTimeCongestion(placeId, current).toInt(),
             byTimePercent = byTimePercent
         )
+    }
+
+    @Transactional(readOnly = false)
+    fun getDistribution(placeId: Long): PlaceMapResponseDTO.PlaceUserDistributionDto{
+
+        val place = placeRepository.findWithDistribution(placeId)
+            .orElseThrow { ExceptionHandler(ErrorStatus.PLACE_NOT_FOUND) }
+
+        val distribution: VisitorDistribution = place.visitorDistribution
+            ?: visitorDistributionRepository.saveAndFlush<VisitorDistribution>(VisitorDistribution())
+
+        val totalVisitorCount: Float = distribution.getTotalVisitorCount().toFloat()
+
+        return PlaceMapResponseDTO.PlaceUserDistributionDto(
+            male1020 = safePercent(distribution.m1020, totalVisitorCount),
+            male3040 = safePercent(distribution.m3040, totalVisitorCount),
+            male5060 = safePercent(distribution.m5060, totalVisitorCount),
+            male70 = safePercent(distribution.m70, totalVisitorCount),
+            female1020 = safePercent(distribution.f1020, totalVisitorCount),
+            female3040 = safePercent(distribution.f3040, totalVisitorCount),
+            female5060 = safePercent(distribution.f5060, totalVisitorCount),
+            female70 = safePercent(distribution.f70, totalVisitorCount)
+        )
+
+    }
+
+    private fun safePercent(numerator: Int, denominator: Float): Float{
+        return if(denominator == 0.0f) 0f else numerator / denominator * 100.0f
     }
 
 
