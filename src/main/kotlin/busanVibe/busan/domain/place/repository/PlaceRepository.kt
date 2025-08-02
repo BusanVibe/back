@@ -63,5 +63,25 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     @Query("SELECT p FROM Place p WHERE p.id = :placeId")
     fun findWithDistribution(@Param("placeId") placeId: Long): Optional<Place>
 
+    @Query("""
+        SELECT p FROM Place p 
+        LEFT JOIN FETCH p.placeLikes pl
+         LEFT JOIN FETCH p.openTime
+         LEFT JOIN FETCH p.placeImages
+         LEFT JOIN FETCH pl.user
+    """)
+    fun findAllWithLikesAndOpenTime(): List<Place>
+
+    @Query("""
+        SELECT p FROM Place p 
+        LEFT JOIN FETCH p.placeLikes pl
+         LEFT JOIN FETCH p.openTime
+         LEFT JOIN FETCH p.placeImages
+         LEFT JOIN FETCH pl.user 
+        WHERE p.type = :type
+    """)
+    fun findAllWithLikesAndOpenTimeByType(@Param("type") type: PlaceType): List<Place>
+
+
 
 }
