@@ -1,11 +1,10 @@
-package busanVibe.busan.domain.place.service
+package busanVibe.busan.domain.place.util
 
 import org.slf4j.LoggerFactory
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.stereotype.Component
 import java.time.Duration
 import java.time.LocalDateTime
-
 
 @Component
 class PlaceRedisUtil(
@@ -42,7 +41,11 @@ class PlaceRedisUtil(
     }
 
     // 지정 시간 혼잡도 조회
-    fun getTimeCongestion(placeId: Long, dateTime: LocalDateTime): Float {
+    // null이면 현재시간 기준
+    fun getTimeCongestion(placeId: Long, dateTime: LocalDateTime?): Float {
+
+        val dateTime = dateTime ?: LocalDateTime.now()
+
         val roundedHour = (dateTime.hour / 3) * 3
         val key = "place:congestion:$placeId-${dateTime.year}-${dateTime.monthValue}-${dateTime.dayOfMonth}-$roundedHour"
 

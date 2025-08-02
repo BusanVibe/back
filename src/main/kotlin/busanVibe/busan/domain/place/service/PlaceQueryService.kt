@@ -10,6 +10,7 @@ import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.repository.PlaceImageRepository
 import busanVibe.busan.domain.place.repository.PlaceLikeRepository
 import busanVibe.busan.domain.place.repository.PlaceRepository
+import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.review.domain.Review
 import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.domain.user.data.User

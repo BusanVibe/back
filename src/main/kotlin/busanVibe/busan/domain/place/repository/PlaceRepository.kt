@@ -82,6 +82,24 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     """)
     fun findAllWithLikesAndOpenTimeByType(@Param("type") type: PlaceType): List<Place>
 
+    @Query(
+        """
+            SELECT p FROM Place p
+            LEFT JOIN FETCH p.placeImages
+            LEFT JOIN FETCH p.openTime
+        """
+    )
+    fun findAllWithImages(): List<Place>
 
+    @Query(
+        """
+            SELECT DISTINCT p FROM Place p
+            LEFT JOIN FETCH p.placeImages
+            LEFT JOIN FETCH p.openTime
+            LEFT JOIN FETCH p.placeLikes pl
+            LEFT JOIN FETCH pl.user
+        """
+    )
+    fun findAllWithFetch(): List<Place>
 
 }

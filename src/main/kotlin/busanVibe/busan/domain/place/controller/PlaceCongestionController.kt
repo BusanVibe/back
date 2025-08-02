@@ -24,9 +24,9 @@ class PlaceCongestionController (
     fun map(
         @RequestParam("type", required = false, defaultValue = "ALL") type: PlaceType,
         @RequestParam("latitude")latitude: Double,
-        @RequestParam("longitude")longtitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>{
+        @RequestParam("longitude")longitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>{
 
-        val places = placeCongestionQueryService.getMap(type, latitude, longtitude)
+        val places = placeCongestionQueryService.getMap(type, latitude, longitude)
         return ApiResponse.onSuccess(places);
     }
 

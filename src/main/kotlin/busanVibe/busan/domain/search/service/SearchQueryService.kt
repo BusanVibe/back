@@ -4,7 +4,7 @@ import busanVibe.busan.domain.common.dto.InfoType
 import busanVibe.busan.domain.festival.repository.FestivalRepository
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.repository.PlaceRepository
-import busanVibe.busan.domain.place.service.PlaceRedisUtil
+import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.search.dto.SearchResultDTO
 import busanVibe.busan.domain.search.enums.GeneralSortType
 import busanVibe.busan.domain.user.service.login.AuthService

@@ -7,6 +7,7 @@ import busanVibe.busan.domain.place.dto.PlaceMapResponseDTO
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.repository.PlaceRepository
 import busanVibe.busan.domain.place.repository.VisitorDistributionRepository
+import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.review.domain.Review
 import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
