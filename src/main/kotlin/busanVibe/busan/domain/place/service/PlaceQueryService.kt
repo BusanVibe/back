@@ -7,10 +7,10 @@ import busanVibe.busan.domain.place.domain.PlaceLike
 import busanVibe.busan.domain.place.dto.PlaceResponseDTO
 import busanVibe.busan.domain.place.enums.PlaceSortType
 import busanVibe.busan.domain.place.enums.PlaceType
-import busanVibe.busan.domain.place.repository.OpenTimeRepository
 import busanVibe.busan.domain.place.repository.PlaceImageRepository
 import busanVibe.busan.domain.place.repository.PlaceLikeRepository
 import busanVibe.busan.domain.place.repository.PlaceRepository
+import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.review.domain.Review
 import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.domain.user.data.User
@@ -92,7 +92,7 @@ class PlaceQueryService(
         // 정렬 처리
         val sortedList = when (sort) {
             PlaceSortType.DEFAULT -> dtoList
-            PlaceSortType.LIKES -> dtoList.sortedByDescending { it.likeAmount }
+            PlaceSortType.LIKE -> dtoList.sortedByDescending { it.likeAmount }
             PlaceSortType.CONGESTION -> dtoList.sortedByDescending { it.congestionLevel }
         }
 

@@ -2,10 +2,12 @@ package busanVibe.busan.domain.place.repository
 
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.enums.PlaceType
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import java.math.BigDecimal
+import java.util.Optional
 
 interface PlaceRepository: JpaRepository<Place, Long> {
 
@@ -56,5 +58,48 @@ interface PlaceRepository: JpaRepository<Place, Long> {
         """
     )
     fun findByIdWithReviewAndImage(@Param("placeId") placeId: Long): Place?
+
+    @EntityGraph(attributePaths = ["visitorDistribution"])
+    @Query("SELECT p FROM Place p WHERE p.id = :placeId")
+    fun findWithDistribution(@Param("placeId") placeId: Long): Optional<Place>
+
+    @Query("""
+        SELECT p FROM Place p 
+        LEFT JOIN FETCH p.placeLikes pl
+         LEFT JOIN FETCH p.openTime
+         LEFT JOIN FETCH p.placeImages
+         LEFT JOIN FETCH pl.user
+    """)
+    fun findAllWithLikesAndOpenTime(): List<Place>
+
+    @Query("""
+        SELECT p FROM Place p 
+        LEFT JOIN FETCH p.placeLikes pl
+         LEFT JOIN FETCH p.openTime
+         LEFT JOIN FETCH p.placeImages
+         LEFT JOIN FETCH pl.user 
+        WHERE p.type = :type
+    """)
+    fun findAllWithLikesAndOpenTimeByType(@Param("type") type: PlaceType): List<Place>
+
+    @Query(
+        """
+            SELECT p FROM Place p
+            LEFT JOIN FETCH p.placeImages
+            LEFT JOIN FETCH p.openTime
+        """
+    )
+    fun findAllWithImages(): List<Place>
+
+    @Query(
+        """
+            SELECT DISTINCT p FROM Place p
+            LEFT JOIN FETCH p.placeImages
+            LEFT JOIN FETCH p.openTime
+            LEFT JOIN FETCH p.placeLikes pl
+            LEFT JOIN FETCH pl.user
+        """
+    )
+    fun findAllWithFetch(): List<Place>
 
 }

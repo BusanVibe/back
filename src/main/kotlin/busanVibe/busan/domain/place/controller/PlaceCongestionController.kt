@@ -24,9 +24,9 @@ class PlaceCongestionController (
     fun map(
         @RequestParam("type", required = false, defaultValue = "ALL") type: PlaceType,
         @RequestParam("latitude")latitude: Double,
-        @RequestParam("longitude")longtitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>{
+        @RequestParam("longitude")longitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>{
 
-        val places = placeCongestionQueryService.getMap(type, latitude, longtitude)
+        val places = placeCongestionQueryService.getMap(type, latitude, longitude)
         return ApiResponse.onSuccess(places);
     }
 
@@ -47,9 +47,10 @@ class PlaceCongestionController (
     }
 
     @GetMapping("/place/{placeId}/distribution")
-    @Operation(summary = "명소 이용객 분포 조회")
+    @Operation(summary = "명소 이용객 분포 조회", description = "각 분포 항목의 백분율 정보를 반환합니다.")
     fun placeUsesDistribution(@PathVariable("placeId") placeId: Long): ApiResponse<PlaceMapResponseDTO.PlaceUserDistributionDto>?{
-        return null;
+        val distribution = placeCongestionQueryService.getDistribution(placeId)
+        return ApiResponse.onSuccess(distribution)
     }
 
 }

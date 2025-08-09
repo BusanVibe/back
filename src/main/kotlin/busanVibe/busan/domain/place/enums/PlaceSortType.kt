@@ -3,7 +3,7 @@ package busanVibe.busan.domain.place.enums
 enum class PlaceSortType {
 
     DEFAULT,
-    LIKES,
+    LIKE,
     CONGESTION
     ;
 

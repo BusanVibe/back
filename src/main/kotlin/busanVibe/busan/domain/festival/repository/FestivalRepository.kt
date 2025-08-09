@@ -23,5 +23,14 @@ interface FestivalRepository: JpaRepository<Festival, Long> {
     """)
     fun findByIdWithLikesAndImages(@Param("id") id: Long): Festival?
 
+    @Query(
+        """
+            SELECT f FROM Festival f
+            LEFT JOIN FETCH f.festivalImages
+            LEFT JOIN FETCH f.festivalLikes fl
+            LEFT JOIN FETCH fl.user
+        """
+    )
+    fun findAllWithFetch(): List<Festival>
 
 }

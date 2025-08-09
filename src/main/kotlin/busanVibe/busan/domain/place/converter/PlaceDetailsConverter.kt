@@ -5,7 +5,7 @@ import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.domain.PlaceImage
 import busanVibe.busan.domain.place.domain.PlaceLike
 import busanVibe.busan.domain.place.dto.PlaceResponseDTO
-import busanVibe.busan.domain.place.service.PlaceRedisUtil
+import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.review.domain.Review
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
