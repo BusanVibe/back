@@ -19,7 +19,7 @@ class SearchResultDTO {
         val name: String,
         val latitude: Double? = null,
         val longitude: Double? = null,
-        val region: String,
+        val address: String,
         val congestionLevel: Int? = null,
         @get:JsonProperty("is_liked")
         val isLiked: Boolean,
