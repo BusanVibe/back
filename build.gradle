@@ -63,7 +63,20 @@ dependencies {
 
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.1.RELEASE'
 
+	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	// web socket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	//mongo
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+	// 직렬화
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation "com.fasterxml.jackson.module:jackson-module-kotlin"
+
+
 }
 
 tasks.named('test') {

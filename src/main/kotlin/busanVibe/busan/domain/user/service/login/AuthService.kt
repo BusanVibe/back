@@ -1,14 +1,12 @@
 package busanVibe.busan.domain.user.service.login
 
 import busanVibe.busan.domain.user.data.User
-import busanVibe.busan.domain.user.repository.UserRepository
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
 import org.springframework.security.core.context.SecurityContextHolder
 
 class AuthService(
 ) {
-
 
     fun getCurrentUser(): User {
 
