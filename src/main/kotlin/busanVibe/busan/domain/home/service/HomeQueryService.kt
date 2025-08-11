@@ -50,7 +50,7 @@ class HomeQueryService(
                 type = place.type.korean,
                 image = place.placeImages.firstOrNull()?.imgUrl,
                 congestionLevel = congestion,
-                region = place.address
+                address = place.address
             )
         }
 
@@ -73,7 +73,7 @@ class HomeQueryService(
                 image = place.placeImages.firstOrNull()?.imgUrl,
                 latitude = place.latitude.toDouble(),
                 longitude = place.longitude.toDouble(),
-                region = place.address,
+                address = place.address,
                 isLiked = place.placeLikes.any { it.user == currentUser }
             )
         }

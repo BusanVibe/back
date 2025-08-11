@@ -4,6 +4,10 @@ spring:
   logging:
     level:
       root: info
+      org.springframework.web.socket: DEBUG
+      org.springframework.messaging: DEBUG
+      org.springframework.messaging.converter: DEBUG
+
 
   docker:
     compose:
@@ -16,6 +20,8 @@ spring:
         force: true
   jackson:
     time-zone: Asia/Seoul
+    serialization:
+      write-dates-as-timestamps: false
   config:
     import: optional:file:.env
   datasource:
@@ -40,12 +46,22 @@ spring:
   kakao:
     client-id: ${Client_ID}
     redirect-uri: ${REDIRECT_URI}
+    deep-link: ${DEEP_LINK}
 
   data:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+    mongodb:
+      uri: ${MONGO_URI}
+      database: ${MONGO_DATABASE}
 
 jwt:
   secret: ${JWT_SECRET}
+
+openai:
+  model: gpt-4o
+  secret-key: ${OPEN_AI_KEY}
+
+
 

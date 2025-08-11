@@ -31,7 +31,10 @@ enum class ErrorStatus(
     SEARCH_INVALID_CONDITION(HttpStatus.BAD_REQUEST, "SEARCH4002", "잘못된 검색 조건입니다."),
 
     // 인증 관련 에러
-    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "AUTH4010", "인증에 실패했습니다.");
+    AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "AUTH4010", "인증에 실패했습니다."),
+
+    // 채팅 관련 에러
+    CHAT_INVALID_LENGTH(HttpStatus.BAD_REQUEST, "CHAT4001", "글자 수는 200자로 제한됩니다."),
 
     ;
 

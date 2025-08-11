@@ -16,7 +16,7 @@ class FestivalDetailsDTO {
         val isLike: Boolean,
         val startDate: String,
         val endDate: String,
-        val region: String,
+        val address: String,
         val phone: String,
         val fee: Int,
         val siteUrl: String,

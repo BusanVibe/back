@@ -15,7 +15,7 @@ class FestivalConverter {
             img = festivalImageMap[festivalId],
             startDate = convertFestivalDate(festival.startDate),
             endDate = convertFestivalDate(festival.endDate),
-            region = festival.place,
+            address = festival.place,
             isLike = userLikedFestivalIdList.contains(festivalId),
             likeCount = likeCountMap[festivalId] ?: 0,
         )

@@ -47,7 +47,7 @@ class User(
     }
 
     override fun getUsername(): String? {
-        return email
+        return id.toString()
     }
 
 }

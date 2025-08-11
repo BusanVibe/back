@@ -3,7 +3,6 @@ package busanVibe.busan.global.config.security
 import lombok.RequiredArgsConstructor
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer
@@ -27,27 +26,28 @@ class SecurityConfig {
     }
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity, jwtTokenProvider: JwtTokenProvider): SecurityFilterChain{
-
-        http.formLogin { it.disable() }
-            .httpBasic { it.disable() }
-            .csrf { it.disable() }
-            .cors { it.configurationSource(corsConfigurationSource()) }
+    fun securityFilterChain(http: HttpSecurity, jwtTokenProvider: JwtTokenProvider): SecurityFilterChain {
+        http
             .headers { it.frameOptions { it.disable() } }
-            .sessionManagement { session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .csrf { csrf -> csrf.disable() }
+            .cors { it.configurationSource(corsConfigurationSource()) }
             .authorizeHttpRequests {
-                it.requestMatchers(
+                it
+                    .requestMatchers(
                         "/",
                         "/home",
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
-                        "/users/oauth/kakao"
-                    ).permitAll()
-                    .anyRequest()
-                    .authenticated() }
-            .addFilterBefore(
-                JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java
-            )
+                        "/users/oauth/kakao",
+                        "/ws-chat/**",
+                    ).permitAll() // ws-chat 경로 완전 허용
+                    .anyRequest().authenticated()
+            }
+            // JWT 필터 등은 유지
+            .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
+            .formLogin { it.disable() }
+            .httpBasic { it.disable() }
+            .addFilterBefore(JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
     }
@@ -56,24 +56,19 @@ class SecurityConfig {
     fun corsConfigurationSource(): CorsConfigurationSource {
 
 
-        val configuration: CorsConfiguration = CorsConfiguration()
-
-        configuration.setAllowedOriginPatterns(
-            listOf(
-                "http://localhost:5173",
-                "http://localhost:8080",
-                "https://busanvibe.site",
-                "https://*.busanvibe.site",
-
-            )
+        val configuration = CorsConfiguration()
+        configuration.allowedOriginPatterns = listOf(
+            "http://localhost:*",
+            "http://127.0.0.1:*",
+            "https://busanvibe.site",
+            "https://*.busanvibe.site"
         )
-
-        configuration.allowedHeaders = listOf("*")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true
         configuration.maxAge = 3600L
 
-        val source: UrlBasedCorsConfigurationSource = UrlBasedCorsConfigurationSource()
+        val source = UrlBasedCorsConfigurationSource()
         source.registerCorsConfiguration("/**", configuration)
         return source
     }

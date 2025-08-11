@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
@@ -49,7 +48,7 @@ class JwtTokenProvider(
     }
 
     fun createToken(user: User) : TokenResponseDto {
-        val claims: Claims = Jwts.claims().setSubject(user.email)
+        val claims: Claims = Jwts.claims().setSubject(user.id.toString())
         val now: Date = Date()
 
         val accessToken: String = Jwts.builder()
@@ -101,8 +100,8 @@ class JwtTokenProvider(
     }
 
     fun getAuthentication(token: String): Authentication {
-        val email: String = getEmailFromToken(token)
-        val user:User = userRepository.findByEmail(email)
+        val id: Long = getIdFromToken(token).toLong()
+        val user:User = userRepository.findById(id)
             .orElseThrow { ExceptionHandler(ErrorStatus.USER_NOT_FOUND) }
 
         return UsernamePasswordAuthenticationToken(
@@ -111,7 +110,7 @@ class JwtTokenProvider(
 
     }
 
-    fun getEmailFromToken(token:String):String{
+    fun getIdFromToken(token:String):String{
         return Jwts.parserBuilder()
             .setSigningKey(key)
             .build()

@@ -21,7 +21,7 @@ class HomeResponseDTO {
         val type: String,
         val image: String?,
         val congestionLevel: Int,
-        val region: String
+        val address: String
     )
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
@@ -33,7 +33,7 @@ class HomeResponseDTO {
         val image: String?,
         val latitude: Double,
         val longitude: Double,
-        val region: String,
+        val address: String,
         @get:JsonProperty("is_liked")
         val isLiked: Boolean
     )

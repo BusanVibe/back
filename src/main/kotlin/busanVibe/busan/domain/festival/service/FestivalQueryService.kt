@@ -116,7 +116,7 @@ class FestivalQueryService(
             isLike = likeList.any { it.user.id == currentUser.id },
             startDate = FestivalConverter().convertFestivalDate(festival.startDate),
             endDate = FestivalConverter().convertFestivalDate(festival.endDate),
-            region = festival.place,
+            address = festival.place,
             fee = festival.fee,
             siteUrl = festival.siteUrl,
             introduce = festival.introduction,

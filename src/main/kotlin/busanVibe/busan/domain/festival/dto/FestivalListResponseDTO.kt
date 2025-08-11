@@ -18,7 +18,7 @@ class FestivalListResponseDTO {
         val img: String?,
         val startDate: String,
         val endDate: String,
-        val region: String,
+        val address: String,
         @get:JsonProperty("is_like")
         val isLike: Boolean,
         val likeCount: Int,
