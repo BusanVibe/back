@@ -46,6 +46,7 @@ spring:
   kakao:
     client-id: ${Client_ID}
     redirect-uri: ${REDIRECT_URI}
+    deep-link: ${DEEP_LINK}
 
   data:
     redis:
