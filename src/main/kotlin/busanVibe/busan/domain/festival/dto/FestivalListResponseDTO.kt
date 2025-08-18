@@ -21,7 +21,7 @@ class FestivalListResponseDTO {
         val address: String,
         @get:JsonProperty("is_like")
         val isLike: Boolean,
-        val likeCount: Int,
+        val likeAmount: Int,
     )
 
 }

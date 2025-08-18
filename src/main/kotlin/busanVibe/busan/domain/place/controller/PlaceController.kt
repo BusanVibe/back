@@ -33,7 +33,16 @@ class PlaceController(
     }
 
     @GetMapping("/{placeId}")
-    @Operation(summary = "명소 상세 조회")
+    @Operation(summary = "명소 상세 조회",
+        description =
+        """
+        명소 상세 조회 API 입니다. 타입 구분 없이 API 응답 형태가 동일합니다.
+        응답 값 중 type 응답 종류 
+        - 'SIGHT'
+        - 'RESTAURANT'
+        - 'CULTURE'
+        """
+    )
     fun getPlaceDetails(@PathVariable("placeId") placeId: Long) : ApiResponse<PlaceResponseDTO.PlaceDetailsDto>?
     {
         val placeDetail: PlaceResponseDTO.PlaceDetailsDto = placeQueryService.getPlaceDetails(placeId)

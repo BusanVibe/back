@@ -120,25 +120,33 @@ class PlaceQueryService(
         // 좋아요 여부 구함
         val isLike = placeLikes.any { it.user.id == currentUser.id }
 
-        if(place.type == PlaceType.SIGHT){
-            return placeDetailsConverter.toSightDto(
-                place = place,
-                placeLikes = placeLikes,
-                placeReviews = placeReviews,
-                placeImages = placeImages,
-                isLike
-            )
-        }
-        else{
-            return placeDetailsConverter.toRestaurantDto(
-                place = place,
-                placeLikes = placeLikes,
-                placeReviews = placeReviews,
-                placeImages = placeImages,
-                placeOpenTime = place.openTime,
-                isLike
-            )
-        }
+        return placeDetailsConverter.toSightDto(
+            place = place,
+            placeLikes = placeLikes,
+            placeReviews = placeReviews,
+            placeImages = placeImages,
+            isLike
+        )
+
+//        if(place.type == PlaceType.SIGHT){
+//            return placeDetailsConverter.toSightDto(
+//                place = place,
+//                placeLikes = placeLikes,
+//                placeReviews = placeReviews,
+//                placeImages = placeImages,
+//                isLike
+//            )
+//        }
+//        else{
+//            return placeDetailsConverter.toRestaurantDto(
+//                place = place,
+//                placeLikes = placeLikes,
+//                placeReviews = placeReviews,
+//                placeImages = placeImages,
+//                placeOpenTime = place.openTime,
+//                isLike
+//            )
+//        }
 
     }
 

@@ -79,7 +79,7 @@ class FestivalQueryService(
             FestivalSortType.DEFAULT -> dtoList
             FestivalSortType.START -> dtoList.sortedBy { it.startDate }
             FestivalSortType.END -> dtoList.sortedBy { it.endDate }
-            FestivalSortType.LIKE -> dtoList.sortedByDescending { it.likeCount }
+            FestivalSortType.LIKE -> dtoList.sortedByDescending { it.likeAmount }
         }
 
         return FestivalListResponseDTO.ListDto(sortedList)
@@ -112,7 +112,7 @@ class FestivalQueryService(
             id = festivalId,
             img = imgUrlSet,
             name = festival.name,
-            likeCount = likeList.size,
+            likeAmount = likeList.size,
             isLike = likeList.any { it.user.id == currentUser.id },
             startDate = FestivalConverter().convertFestivalDate(festival.startDate),
             endDate = FestivalConverter().convertFestivalDate(festival.endDate),

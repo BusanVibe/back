@@ -17,7 +17,7 @@ class FestivalConverter {
             endDate = convertFestivalDate(festival.endDate),
             address = festival.place,
             isLike = userLikedFestivalIdList.contains(festivalId),
-            likeCount = likeCountMap[festivalId] ?: 0,
+            likeAmount = likeCountMap[festivalId] ?: 0,
         )
     }
 
