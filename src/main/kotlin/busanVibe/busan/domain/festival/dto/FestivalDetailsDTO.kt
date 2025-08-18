@@ -11,7 +11,7 @@ class FestivalDetailsDTO {
         val id: Long,
         val img: Set<String>,
         val name: String,
-        val likeCount: Int,
+        val likeAmount: Int,
         @get:JsonProperty("is_like")
         val isLike: Boolean,
         val startDate: String,

@@ -13,7 +13,7 @@ class FestivalListResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class FestivalInfoDto(
-        val festivalId: Long,
+        val id: Long,
         val name: String,
         val img: String?,
         val startDate: String,
@@ -21,7 +21,7 @@ class FestivalListResponseDTO {
         val address: String,
         @get:JsonProperty("is_like")
         val isLike: Boolean,
-        val likeCount: Int,
+        val likeAmount: Int,
     )
 
 }

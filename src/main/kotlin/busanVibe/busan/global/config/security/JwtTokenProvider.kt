@@ -54,7 +54,7 @@ class JwtTokenProvider(
         val accessToken: String = Jwts.builder()
             .setClaims(claims)
             .setIssuedAt(now)
-            .setExpiration(Date(now.time + REFRESH_TOKEN_EXPIRE_TIME))
+            .setExpiration(Date(now.time + ACCESS_TOKEN_EXPIRE_TIME))
             .signWith(key, SignatureAlgorithm.HS256)
             .compact()
 

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "채팅 관련 API")
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/api/chat")
 class ChatRestController(
     private val chatMongoService: ChatMongoService,
 ) {

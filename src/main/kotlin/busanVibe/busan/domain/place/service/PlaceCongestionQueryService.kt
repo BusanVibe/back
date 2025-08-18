@@ -50,7 +50,7 @@ class PlaceCongestionQueryService(
         // DTO 변환
         val placeDtoList :List<PlaceMapResponseDTO.PlaceMapInfoDto> = placeList.map {
             PlaceMapResponseDTO.PlaceMapInfoDto(
-                placeId = it.id,
+                id = it.id,
                 name = it.name,
                 type = it.type.capitalEnglish,
                 latitude = it.latitude,

@@ -14,7 +14,7 @@ class HomeResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class MostCongestion(
-        val placeId: Long?,
+        val id: Long?,
         val name: String,
         val latitude: Double? = null,
         val longitude: Double? = null,
@@ -26,7 +26,7 @@ class HomeResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class RecommendPlace(
-        val placeId: Long?,
+        val id: Long?,
         val name: String,
         val congestionLevel: Int,
         val type: String,

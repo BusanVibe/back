@@ -40,7 +40,8 @@ class SecurityConfig {
                         "/v3/api-docs/**",
                         "/users/oauth/kakao",
                         "/ws-chat/**",
-                    ).permitAll() // ws-chat 경로 완전 허용
+                        "/users/guest/login"
+                    ).permitAll()
                     .anyRequest().authenticated()
             }
             // JWT 필터 등은 유지

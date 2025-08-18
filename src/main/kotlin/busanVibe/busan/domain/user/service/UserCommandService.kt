@@ -4,7 +4,6 @@ import busanVibe.busan.domain.user.converter.UserConverter
 import busanVibe.busan.domain.user.data.User
 import busanVibe.busan.domain.user.data.dto.KaKaoUserInfoResponseDTO
 import busanVibe.busan.domain.user.data.dto.KakaoTokenResponseDTO
-import busanVibe.busan.domain.user.data.dto.TokenResponseDto
 import busanVibe.busan.domain.user.data.dto.UserResponseDTO
 import busanVibe.busan.domain.user.repository.UserRepository
 import busanVibe.busan.global.config.security.JwtTokenProvider
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
+import java.util.UUID
 import kotlin.jvm.java
 
 @Service
@@ -38,6 +38,16 @@ class UserCommandService(
 
     private val log = LoggerFactory.getLogger(this::class.java)
 
+    fun guestLogin(): UserResponseDTO.LoginDto {
+
+        val email = UUID.randomUUID().toString().substring(0,7) + "@busanvibe.com"
+        val nickname = UUID.randomUUID().toString().substring(0, 7)
+        val profileImageUrl: String? = null
+
+        return isNewUser(email, nickname, profileImageUrl)
+    }
+
+
     fun loginOrRegisterByKakao(code: String): UserResponseDTO.LoginDto {
         val token: KakaoTokenResponseDTO = getKakaoToken(code)
         val userInfo = getUserInfo(token.accessToken)
@@ -46,9 +56,7 @@ class UserCommandService(
         val nickname = userInfo.kakaoAccount?.profile?.nickName ?: "\uCE74\uCE74\uC624 \uC0AC\uC6A9\uC790"
         val profileImageUrl = userInfo.kakaoAccount?.profile?.profileImageUrl ?: ""
 
-        val tokenResponseDTO = TokenResponseDto.of(token.accessToken, token.refreshToken)
-
-        return isNewUser(email, nickname, profileImageUrl, tokenResponseDTO)
+        return isNewUser(email, nickname, profileImageUrl)
     }
 
     private fun getKakaoToken(code: String): KakaoTokenResponseDTO {
@@ -92,7 +100,6 @@ class UserCommandService(
         email: String?,
         nickname: String,
         profileImageUrl: String?,
-        tokenResponseDto: TokenResponseDto
     ): UserResponseDTO.LoginDto {
         val user = userRepository.findByEmail(email)
 

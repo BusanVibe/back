@@ -12,7 +12,7 @@ jobs:
     env:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
       # 개인 토큰 필요 시 아래 주석 해제 후 secrets에 등록
-      # GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+      # PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
     steps:
       - name: Get PR number
@@ -29,23 +29,27 @@ jobs:
           echo "$COMMITS_JSON" > commits.json
 
           COMMITS_COUNT=$(echo "$COMMITS_JSON" | jq 'length')
-          COMMITS_MSG=$(echo "$COMMITS_JSON" | jq -r '[.[] | {sha: .sha[:7], url: .html_url, message: .commit.message}] | map("- [\(.sha)](\(.url)) \(.message)") | join("\n")')
+          COMMITS_MSG=$(echo "$COMMITS_JSON" | jq -r '[.[] | "- [" + (.sha[:7]) + "](" + .html_url + ") " + .commit.message] | join("\n")')
 
           echo "COMMITS_COUNT=$COMMITS_COUNT" >> $GITHUB_ENV
           echo "COMMITS_MSG<<EOF" >> $GITHUB_ENV
           echo "$COMMITS_MSG" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-      
 
       - name: Send Discord notification
         run: |
           USERNAME="${{ github.actor }}"
           NOW=$(date '+%Y-%m-%d %H:%M')
 
-          # JSON 문자열을 jq로 안전하게 생성
-          JSON_PAYLOAD=$(jq -n --arg content "🚀 **배포 완료** (main 브랜치)\n\n배포자: @$USERNAME\n커밋 $COMMITS_COUNT개 포함\n배포 시간: $NOW\n\n커밋 내역:\n$COMMITS_MSG" '{content: $content}')
-
-
+          JSON_PAYLOAD=$(jq -n --arg content "🚀 **배포 완료** (main 브랜치)
+          
+          배포자: @$USERNAME
+          커밋 $COMMITS_COUNT개 포함
+          배포 시간: $NOW
+          
+          커밋 내역:
+          $COMMITS_MSG" '{content: $content}')
+            
           curl -H "Content-Type: application/json" \
             -X POST \
             -d "$JSON_PAYLOAD" \

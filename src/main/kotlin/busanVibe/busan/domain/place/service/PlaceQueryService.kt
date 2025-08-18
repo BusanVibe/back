@@ -77,7 +77,7 @@ class PlaceQueryService(
         val dtoList: List<PlaceResponseDTO.PlaceListInfoDto> = placeList.map { place ->
             val placeId = place.id!!
             PlaceResponseDTO.PlaceListInfoDto(
-                placeId = placeId,
+                id = placeId,
                 name = place.name,
                 congestionLevel = congestionMap[placeId] ?: 1,
                 isLike = userLikedPlaceIds.contains(placeId),  // 현재 로그인한 사용자 기준
@@ -120,25 +120,33 @@ class PlaceQueryService(
         // 좋아요 여부 구함
         val isLike = placeLikes.any { it.user.id == currentUser.id }
 
-        if(place.type == PlaceType.SIGHT){
-            return placeDetailsConverter.toSightDto(
-                place = place,
-                placeLikes = placeLikes,
-                placeReviews = placeReviews,
-                placeImages = placeImages,
-                isLike
-            )
-        }
-        else{
-            return placeDetailsConverter.toRestaurantDto(
-                place = place,
-                placeLikes = placeLikes,
-                placeReviews = placeReviews,
-                placeImages = placeImages,
-                placeOpenTime = place.openTime,
-                isLike
-            )
-        }
+        return placeDetailsConverter.toSightDto(
+            place = place,
+            placeLikes = placeLikes,
+            placeReviews = placeReviews,
+            placeImages = placeImages,
+            isLike
+        )
+
+//        if(place.type == PlaceType.SIGHT){
+//            return placeDetailsConverter.toSightDto(
+//                place = place,
+//                placeLikes = placeLikes,
+//                placeReviews = placeReviews,
+//                placeImages = placeImages,
+//                isLike
+//            )
+//        }
+//        else{
+//            return placeDetailsConverter.toRestaurantDto(
+//                place = place,
+//                placeLikes = placeLikes,
+//                placeReviews = placeReviews,
+//                placeImages = placeImages,
+//                placeOpenTime = place.openTime,
+//                isLike
+//            )
+//        }
 
     }
 
