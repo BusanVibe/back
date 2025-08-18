@@ -10,7 +10,7 @@ class FestivalConverter {
     fun toInfoDto(festival: Festival, festivalImageMap: Map<Long, String>, userLikedFestivalIdList: Set<Long>, likeCountMap: Map<Long, Int>): FestivalListResponseDTO.FestivalInfoDto {
         val festivalId = festival.id!!
         return FestivalListResponseDTO.FestivalInfoDto(
-            festivalId = festival.id,
+            id = festival.id,
             name = festival.name,
             img = festivalImageMap[festivalId],
             startDate = convertFestivalDate(festival.startDate),

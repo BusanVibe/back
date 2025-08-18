@@ -15,7 +15,7 @@ class PlaceResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class PlaceListInfoDto(
-        val placeId: Long?,
+        val id: Long?,
         val name: String,
         val congestionLevel: Int,
         @get:JsonProperty("is_like")

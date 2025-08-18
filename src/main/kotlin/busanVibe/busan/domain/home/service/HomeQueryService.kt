@@ -43,7 +43,7 @@ class HomeQueryService(
 
         return top5.map { (place, congestion) ->
             HomeResponseDTO.MostCongestion(
-                placeId = place.id,
+                id = place.id,
                 name = place.name,
                 latitude = place.latitude?.toDouble(),
                 longitude = place.longitude?.toDouble(),
@@ -66,7 +66,7 @@ class HomeQueryService(
             val congestion = placeRedisUtil.getRedisCongestion(place.id)
 
             HomeResponseDTO.RecommendPlace(
-                placeId = place.id,
+                id = place.id,
                 name = place.name,
                 congestionLevel = congestion,
                 type = place.type.korean,

@@ -77,7 +77,7 @@ class PlaceQueryService(
         val dtoList: List<PlaceResponseDTO.PlaceListInfoDto> = placeList.map { place ->
             val placeId = place.id!!
             PlaceResponseDTO.PlaceListInfoDto(
-                placeId = placeId,
+                id = placeId,
                 name = place.name,
                 congestionLevel = congestionMap[placeId] ?: 1,
                 isLike = userLikedPlaceIds.contains(placeId),  // 현재 로그인한 사용자 기준
