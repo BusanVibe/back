@@ -2,6 +2,7 @@ package busanVibe.busan.domain.festival.domain
 
 import busanVibe.busan.domain.common.BaseEntity
 import busanVibe.busan.domain.festival.enums.FestivalStatus
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -20,6 +21,9 @@ class Festival (
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
+    @Column(nullable = false, unique = true)
+    val contentId: Long,
+
     @Column(nullable = false, length = 50)
     val name: String,
 
@@ -36,7 +40,7 @@ class Festival (
     val introduction: String,
 
     @Column(nullable = false)
-    val fee: Int,
+    val fee: String,
 
     @Column(nullable = false)
     val phone: String,
@@ -49,14 +53,20 @@ class Festival (
     @Column(nullable = false)
     val status: FestivalStatus,
 
-    @OneToMany(mappedBy = "festival", fetch = FetchType.LAZY)
-    val festivalImages: Set<FestivalImage>,
+    @OneToMany(mappedBy = "festival", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    val festivalImages: MutableSet<FestivalImage> = mutableSetOf(),
 
     @OneToMany(mappedBy = "festival", fetch = FetchType.LAZY)
     val festivalLikes: Set<FestivalLike>
 
 
 ): BaseEntity(){
+
+    fun addFestivalImage(festivalImage: FestivalImage) {
+        festivalImages.add(festivalImage)
+        festivalImage.festival = this
+    }
+
 
 
 

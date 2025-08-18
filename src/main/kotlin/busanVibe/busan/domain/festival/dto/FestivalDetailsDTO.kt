@@ -18,7 +18,7 @@ class FestivalDetailsDTO {
         val endDate: String,
         val address: String,
         val phone: String,
-        val fee: Int,
+        val fee: String,
         val siteUrl: String,
         val introduce: String
     )

@@ -5,6 +5,7 @@ enum class FestivalStatus {
     ALL,
     IN_PROGRESS,
     UPCOMING,
-    COMPLETE
+    COMPLETE,
+    UNKNOWN
 
 }

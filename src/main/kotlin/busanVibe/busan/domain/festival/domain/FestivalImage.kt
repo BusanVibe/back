@@ -22,7 +22,7 @@ class FestivalImage(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "festival_id")
-    val festival: Festival
+    var festival: Festival
 
 ): BaseEntity() {
 

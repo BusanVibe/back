@@ -4,10 +4,8 @@ spring:
   logging:
     level:
       root: info
-      org.springframework.web.socket: DEBUG
-      org.springframework.messaging: DEBUG
-      org.springframework.messaging.converter: DEBUG
-
+      org.springframework.jdbc.core: DEBUG   # JdbcTemplate 쿼리 로그
+      org.springframework.jdbc.datasource: DEBUG
 
   docker:
     compose:
@@ -62,6 +60,9 @@ jwt:
 openai:
   model: gpt-4o
   secret-key: ${OPEN_AI_KEY}
+
+tourAPI:
+  key: ${TOUR_API_KEY}
 
 
 

@@ -23,7 +23,10 @@ class Place(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, unique = true)
+    val contentId: Long,
+
+    @Column(nullable = false, length = 50)
     val name: String,
 
     @Column(nullable = false)
@@ -31,10 +34,10 @@ class Place(
     val type: PlaceType,
 
     @Column(nullable = false)
-    val latitude: BigDecimal,
+    val latitude: BigDecimal? = null,
 
     @Column(nullable = false)
-    val longitude: BigDecimal,
+    val longitude: BigDecimal? = null,
 
     @Column(nullable = false, length = 50)
     val address: String,
@@ -42,8 +45,17 @@ class Place(
     @Column(nullable = false, columnDefinition = "TEXT")
     val introduction: String,
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     val phone: String,
+
+    // -----
+
+    @Column(nullable = false)
+    val useTime: String,
+
+    @Column(nullable = false)
+    val restDate: String,
+
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "region_id", nullable = false)
@@ -56,13 +68,24 @@ class Place(
     val placeLikes: Set<PlaceLike>,
 
     @OneToOne(mappedBy = "place", fetch = FetchType.LAZY, optional = true)
-    val openTime: OpenTime,
+    val openTime: OpenTime? = null,
 
-    @OneToMany(mappedBy="place", fetch = FetchType.LAZY)
-    val placeImages: Set<PlaceImage>,
+    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
+    val placeImages: MutableSet<PlaceImage> = mutableSetOf(),
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "visitor_distribution_id")
     val visitorDistribution: VisitorDistribution? = null,
 
-) : BaseEntity()
+) : BaseEntity(){
+
+    fun addImage(imgUrl: String) {
+        val image = PlaceImage(imgUrl = imgUrl, place = this)
+        placeImages.add(image)
+    }
+
+    fun removeImage(image: PlaceImage) {
+        placeImages.remove(image)
+    }
+
+}

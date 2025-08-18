@@ -16,8 +16,8 @@ class HomeResponseDTO {
     data class MostCongestion(
         val placeId: Long?,
         val name: String,
-        val latitude: Double,
-        val longitude: Double,
+        val latitude: Double? = null,
+        val longitude: Double? = null,
         val type: String,
         val image: String?,
         val congestionLevel: Int,
@@ -31,8 +31,8 @@ class HomeResponseDTO {
         val congestionLevel: Int,
         val type: String,
         val image: String?,
-        val latitude: Double,
-        val longitude: Double,
+        val latitude: Double?,
+        val longitude: Double?,
         val address: String,
         @get:JsonProperty("is_liked")
         val isLiked: Boolean

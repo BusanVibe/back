@@ -45,8 +45,8 @@ class HomeQueryService(
             HomeResponseDTO.MostCongestion(
                 placeId = place.id,
                 name = place.name,
-                latitude = place.latitude.toDouble(),
-                longitude = place.longitude.toDouble(),
+                latitude = place.latitude?.toDouble(),
+                longitude = place.longitude?.toDouble(),
                 type = place.type.korean,
                 image = place.placeImages.firstOrNull()?.imgUrl,
                 congestionLevel = congestion,
@@ -71,8 +71,8 @@ class HomeQueryService(
                 congestionLevel = congestion,
                 type = place.type.korean,
                 image = place.placeImages.firstOrNull()?.imgUrl,
-                latitude = place.latitude.toDouble(),
-                longitude = place.longitude.toDouble(),
+                latitude = place.latitude?.toDouble(),
+                longitude = place.longitude?.toDouble(),
                 address = place.address,
                 isLiked = place.placeLikes.any { it.user == currentUser }
             )
