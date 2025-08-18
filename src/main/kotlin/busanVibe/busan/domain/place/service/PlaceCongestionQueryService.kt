@@ -11,6 +11,7 @@ import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.review.domain.Review
 import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
+import busanVibe.busan.global.apiPayload.exception.GeneralException
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -32,18 +33,33 @@ class PlaceCongestionQueryService(
 
     private val log = LoggerFactory.getLogger(PlaceCongestionQueryService::class.java)
 
+    /**
+     * 두 좌표를 받아 계산 및 조회 후 반환
+     * 좌측상단 좌표 ( lat1, ln1 ), 우측하단 좌표 ( lat2, lng2 )
+     * lat1 > lat2
+     * lng1 < lng2
+     */
     @Transactional(readOnly = true)
-    fun getMap(type: PlaceType?, latitude: Double, longitude: Double): PlaceMapResponseDTO.MapListDto{
+    fun getMap(type: PlaceType?, lat1: Double, lng1: Double, lat2: Double, lng2: Double): PlaceMapResponseDTO.MapListDto{
 
         // Place -> name, type, latitude, longitude
         // Redis -> congestion level
 
+        if (lat1 !in -90.0..90.0 || lat2 !in -90.0..90.0)
+            throw GeneralException(ErrorStatus.MAP_LATITUDE_OUT_OF_RANGE)
+
+        if (lng1 !in -180.0..180.0 || lng2 !in -180.0..180.0)
+            throw GeneralException(ErrorStatus.MAP_LONGITUDE_OUT_OF_RANGE)
+
+        if (lat1 <= lat2 || lng1 >= lng2)
+            throw GeneralException(ErrorStatus.MAP_INVALID_COORDINATE_ORDER)
+
         // Place 목록 조회
         val placeList = placeRepository.findPlacesByLocationAndType(
-            BigDecimal(latitude - latitudeRange).setScale(6, RoundingMode.HALF_UP),
-            BigDecimal(latitude + latitudeRange).setScale(6, RoundingMode.HALF_UP),
-            BigDecimal(longitude - longitudeRange).setScale(6, RoundingMode.HALF_UP),
-            BigDecimal(longitude + longitudeRange).setScale(6, RoundingMode.HALF_UP),
+            BigDecimal(lat2).setScale(6, RoundingMode.HALF_UP),
+            BigDecimal(lat1).setScale(6, RoundingMode.HALF_UP),
+            BigDecimal(lng1).setScale(6, RoundingMode.HALF_UP),
+            BigDecimal(lng2).setScale(6, RoundingMode.HALF_UP),
             type
         )
 

@@ -10,7 +10,7 @@ data class ChatMessageSendDTO(
 //    var userId: Long? = null,
     var type: MessageType? = null,     // 메시지 타입
     var message: String? = null,       // 메시지
-    var time: LocalDateTime? = null,          // 전송 시간
+//    var time: LocalDateTime? = null,          // 전송 시간
 ){
 
 }

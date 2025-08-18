@@ -9,12 +9,13 @@ class ChatMessageResponseDTO {
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class ListDto(
-        val chatList: List<ChatInfoDto>
+        val chatList: List<ChatInfoDto>,
+        val nextCursor: String? = null
     )
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class ChatInfoDto(
-        val userName: String,
+        val userName: String?,
         val userImage: String?,
         val content: String,
         val dateTime: LocalDateTime?,

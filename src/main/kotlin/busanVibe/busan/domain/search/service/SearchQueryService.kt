@@ -1,12 +1,14 @@
 package busanVibe.busan.domain.search.service
 
 import busanVibe.busan.domain.common.dto.InfoType
+import busanVibe.busan.domain.festival.repository.FestivalLikesRepository
 import busanVibe.busan.domain.festival.repository.FestivalRepository
 import busanVibe.busan.domain.place.enums.PlaceType
+import busanVibe.busan.domain.place.repository.PlaceLikeRepository
 import busanVibe.busan.domain.place.repository.PlaceRepository
-import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.search.dto.SearchResultDTO
 import busanVibe.busan.domain.search.enums.GeneralSortType
+import busanVibe.busan.domain.search.util.SearchUtil
 import busanVibe.busan.domain.user.service.login.AuthService
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
@@ -17,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional
 class SearchQueryService(
     private val placeRepository: PlaceRepository,
     private val festivalRepository: FestivalRepository,
-    private val placeRedisUtil: PlaceRedisUtil
+    private val placeLikeRepository: PlaceLikeRepository,
+    private val festivalLikeRepository: FestivalLikesRepository,
+    private val searchUtil: SearchUtil,
 ) {
 
     @Transactional(readOnly = true)
@@ -44,68 +48,13 @@ class SearchQueryService(
             else -> emptyList()
         }
 
-        // 축제 List -> dto List 변환
-        val festivalDtoList = festivals.map { festival ->
-            SearchResultDTO.InfoDto(
-                typeKr = InfoType.FESTIVAL.kr,
-                typeEn = InfoType.FESTIVAL.en,
-                id = festival.id,
-                name = festival.name,
-                address = festival.place,
-                isLiked = festival.festivalLikes.any { it.user == currentUser },
-                startDate = festival.startDate.toString(),
-                endDate = festival.endDate.toString(),
-                isEnd = festival.endDate.before(java.util.Date())
-            )
-        }
+        val placeLikeList = placeLikeRepository.findLikeByPlace(places)
+        val festivalLikeList = festivalLikeRepository.findLikeByFestival(festivals)
 
-        // 혼잡도 List -> dto List 변환
-        val placeDtoList = places.map { place ->
-            SearchResultDTO.InfoDto(
-                typeKr = place.type.korean,
-                typeEn = place.type.capitalEnglish,
-                id = place.id,
-                name = place.name,
-                latitude = place.latitude?.toDouble(),
-                longitude = place.longitude?.toDouble(),
-                address = place.address,
-                congestionLevel = placeRedisUtil.getRedisCongestion(place.id),
-                isLiked = place.placeLikes.any { it.user == currentUser },
-                startDate = null,
-                endDate = null,
-                isEnd = null
-            )
-        }
+        // 엔티티 List로 DTO List 반환
+        val resultList = searchUtil.listToSearchDTO(places, festivals, sort, currentUser, placeLikeList, festivalLikeList)
 
-        // 정렬 기준에 따라 처리
-        val resultList: List<SearchResultDTO.InfoDto> = when (sort) {
-            GeneralSortType.LIKE -> {
-                (placeDtoList + festivalDtoList).sortedByDescending { item ->
-                    // 좋아요 수 기준 정렬
-                    when (item.typeEn) {
-                        InfoType.FESTIVAL.en -> festivals.find { it.id == item.id }?.festivalLikes?.size ?: 0
-                        else -> places.find { it.id == item.id }?.placeLikes?.size ?: 0
-                    }
-                }
-            }
-
-            GeneralSortType.CONGESTION -> {
-                // 혼잡도 정렬은 명소만 해당
-                placeDtoList
-                    .filter { it.congestionLevel != null }
-                    .sortedBy { it.congestionLevel }
-            }
-
-            GeneralSortType.DEFAULT -> {
-                // 기본 정렬은 그대로
-                placeDtoList + festivalDtoList
-            }
-        }
-
-        // 반환
-        return SearchResultDTO.ListDto(resultList)
+        return SearchResultDTO.ListDto(sort.name, resultList)
     }
-
-
 
 }

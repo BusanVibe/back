@@ -2,6 +2,7 @@ package busanVibe.busan.domain.place.repository
 
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.enums.PlaceType
+import busanVibe.busan.domain.user.data.User
 import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -101,5 +102,29 @@ interface PlaceRepository: JpaRepository<Place, Long> {
         """
     )
     fun findAllWithFetch(): List<Place>
+
+    @Query(
+        """
+            SELECT DISTINCT p FROM Place p
+            LEFT JOIN FETCH p.placeLikes pl
+            LEFT JOIN FETCH p.placeImages
+            LEFT JOIN FETCH p.openTime
+            LEFT JOIN FETCH pl.user
+            WHERE pl.user = :user
+        """
+    )
+    fun findLikePlace(@Param("user") user: User): List<Place>
+
+    @Query(
+        """
+            SELECT DISTINCT p FROM Place p
+            LEFT JOIN FETCH p.placeLikes pl
+            LEFT JOIN FETCH p.placeImages
+            LEFT JOIN FETCH p.openTime
+            LEFT JOIN FETCH pl.user
+            WHERE p.type = :type AND pl.user = :user
+        """
+    )
+    fun findLikePlaceByType(@Param("type") type: PlaceType, @Param("user") user: User): List<Place>
 
 }

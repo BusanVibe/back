@@ -27,7 +27,7 @@ class User(
      val id: Long? = null,
 
     @Column(nullable = false, unique = true)
-     var email: String?,
+     var email: String,
 
     @Column(nullable = false, length = 50)
      var nickname: String,
