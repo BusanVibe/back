@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "유저 관련 API", description = "로그인과 분리할수도 있습니다")
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 class UserController (
     private val userCommandService: UserCommandService,
     private val loginRedirectUtil: LoginRedirectUtil
