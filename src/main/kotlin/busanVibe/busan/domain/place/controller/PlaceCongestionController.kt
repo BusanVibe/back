@@ -20,13 +20,25 @@ class PlaceCongestionController (
 ){
 
     @GetMapping
-    @Operation(summary = "지도 조회")
+    @Operation(summary = "지도 조회",
+        description =
+        """
+            지도에 띄울 장소를 조회합니다.
+            좌측 상단의 좌표와 우측 하단의 위경도를 요청 파라미터로 포함하세요.
+            좌측상단 ( lat1, lng1 ), 우측하단 ( lat2, lng2 )
+            lat1 > lat2
+            lng1 < lng2
+        """
+    )
     fun map(
         @RequestParam("type", required = false, defaultValue = "ALL") type: PlaceType,
-        @RequestParam("latitude")latitude: Double,
-        @RequestParam("longitude")longitude: Double): ApiResponse<PlaceMapResponseDTO.MapListDto>{
+        @RequestParam("lat1")lat1: Double,
+        @RequestParam("lng1")lng1: Double,
+        @RequestParam("lat2")lat2: Double,
+        @RequestParam("lng2")lng2: Double
+    ): ApiResponse<PlaceMapResponseDTO.MapListDto>{
 
-        val places = placeCongestionQueryService.getMap(type, latitude, longitude)
+        val places = placeCongestionQueryService.getMap(type, lat1, lng1, lat2, lng2)
         return ApiResponse.onSuccess(places);
     }
 
