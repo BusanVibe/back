@@ -35,7 +35,9 @@ enum class ErrorStatus(
 
     // 채팅 관련 에러
     CHAT_INVALID_LENGTH(HttpStatus.BAD_REQUEST, "CHAT4001", "글자 수는 200자로 제한됩니다."),
-
+    INVALID_PAGE_SIZE_MINUS(HttpStatus.BAD_REQUEST, "CHAT4002", "페이지 크기는 음수일 수 없습니다."),
+    INVALID_PAGE_SIZE_BIG(HttpStatus.BAD_REQUEST, "CHAT4003", "페이지 크기는 30을 넘을 수 없습니다."),
+    CHAT_USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT4004", "채팅에 해당하는 유저를 찾을 수 없습니다."),
     ;
 
     override fun getReason(): ErrorReasonDTO {
