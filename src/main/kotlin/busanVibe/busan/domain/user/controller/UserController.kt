@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -29,7 +30,7 @@ class UserController (
         return ResponseEntity.status(HttpStatus.FOUND).headers(redirectHeader).build()
     }
 
-    @GetMapping("/guest/login")
+    @PostMapping("/guest/login")
     @Operation(summary = "게스트 로그인 API", description = "1회용 계정 로그인입니다. 재로그인이 불가능합니다.")
     fun guestLogin(): ApiResponse<TokenResponseDto>{
         val userResponse: UserResponseDTO.LoginDto = userCommandService.guestLogin()
