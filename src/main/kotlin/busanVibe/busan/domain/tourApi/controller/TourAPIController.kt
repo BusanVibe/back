@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "Tour API 관련 API", description = "이거 지금 호출해도 오류납니다.")
 @RestController
-@RequestMapping("/tour-api")
+@RequestMapping("/api/tour")
 class TourAPIController(
     private val tourCommandService: TourCommandService
 ) {
