@@ -2,10 +2,12 @@ package busanVibe.busan.domain.user.service
 
 import busanVibe.busan.domain.user.converter.UserConverter
 import busanVibe.busan.domain.user.data.User
-import busanVibe.busan.domain.user.data.dto.KaKaoUserInfoResponseDTO
-import busanVibe.busan.domain.user.data.dto.KakaoTokenResponseDTO
-import busanVibe.busan.domain.user.data.dto.UserResponseDTO
+import busanVibe.busan.domain.user.data.dto.login.KaKaoUserInfoResponseDTO
+import busanVibe.busan.domain.user.data.dto.login.KakaoTokenResponseDTO
+import busanVibe.busan.domain.user.data.dto.login.UserLoginResponseDTO
 import busanVibe.busan.domain.user.repository.UserRepository
+import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
+import busanVibe.busan.global.apiPayload.exception.GeneralException
 import busanVibe.busan.global.config.security.JwtTokenProvider
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
@@ -38,7 +40,7 @@ class UserCommandService(
 
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    fun guestLogin(): UserResponseDTO.LoginDto {
+    fun guestLogin(): UserLoginResponseDTO.LoginDto {
 
         val email = UUID.randomUUID().toString().substring(0,7) + "@busanvibe.com"
         val nickname = UUID.randomUUID().toString().substring(0, 7)
@@ -48,13 +50,13 @@ class UserCommandService(
     }
 
 
-    fun loginOrRegisterByKakao(code: String): UserResponseDTO.LoginDto {
+    fun loginOrRegisterByKakao(code: String): UserLoginResponseDTO.LoginDto {
         val token: KakaoTokenResponseDTO = getKakaoToken(code)
         val userInfo = getUserInfo(token.accessToken)
 
-        val email = userInfo.kakaoAccount?.email
-        val nickname = userInfo.kakaoAccount?.profile?.nickName ?: "\uCE74\uCE74\uC624 \uC0AC\uC6A9\uC790"
-        val profileImageUrl = userInfo.kakaoAccount?.profile?.profileImageUrl ?: ""
+        val email = userInfo.kakaoAccount?.email ?: throw GeneralException(ErrorStatus.USER_NOT_FOUND)
+        val nickname = userInfo.kakaoAccount.profile?.nickName ?: "\uCE74\uCE74\uC624 \uC0AC\uC6A9\uC790"
+        val profileImageUrl = userInfo.kakaoAccount.profile?.profileImageUrl ?: ""
 
         return isNewUser(email, nickname, profileImageUrl)
     }
@@ -97,10 +99,10 @@ class UserCommandService(
     }
 
     private fun isNewUser(
-        email: String?,
+        email: String,
         nickname: String,
         profileImageUrl: String?,
-    ): UserResponseDTO.LoginDto {
+    ): UserLoginResponseDTO.LoginDto {
         val user = userRepository.findByEmail(email)
 
         return user.map {

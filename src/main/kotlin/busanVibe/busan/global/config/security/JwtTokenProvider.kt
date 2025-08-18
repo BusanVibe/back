@@ -1,7 +1,7 @@
 package busanVibe.busan.global.config.security
 
 import busanVibe.busan.domain.user.data.User
-import busanVibe.busan.domain.user.data.dto.TokenResponseDto
+import busanVibe.busan.domain.user.data.dto.login.TokenResponseDto
 import busanVibe.busan.domain.user.repository.RefreshTokenRepository
 import busanVibe.busan.domain.user.repository.UserRepository
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus

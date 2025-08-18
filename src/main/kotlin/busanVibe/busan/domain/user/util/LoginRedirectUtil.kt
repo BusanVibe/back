@@ -1,6 +1,6 @@
 package busanVibe.busan.domain.user.util
 
-import busanVibe.busan.domain.user.data.dto.UserResponseDTO
+import busanVibe.busan.domain.user.data.dto.login.UserLoginResponseDTO
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
@@ -13,7 +13,7 @@ class LoginRedirectUtil(
     private val deepLink: String
 ){
 
-    fun getRedirectHeader(userResponse: UserResponseDTO.LoginDto): HttpHeaders{
+    fun getRedirectHeader(userResponse: UserLoginResponseDTO.LoginDto): HttpHeaders{
         val accessTokenEncoded = URLEncoder.encode(userResponse.tokenResponseDTO.accessToken, "UTF-8")
         val refreshTokenEncoded = URLEncoder.encode(userResponse.tokenResponseDTO.refreshToken, "UTF-8")
 
