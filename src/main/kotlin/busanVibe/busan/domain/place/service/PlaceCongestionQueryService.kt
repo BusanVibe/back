@@ -11,6 +11,7 @@ import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.review.domain.Review
 import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
+import busanVibe.busan.global.apiPayload.exception.GeneralException
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -45,17 +46,13 @@ class PlaceCongestionQueryService(
         // Redis -> congestion level
 
         if (lat1 !in -90.0..90.0 || lat2 !in -90.0..90.0)
-            throw IllegalArgumentException("위도는 -90~90 사이여야 합니다. 요청 값: lat1=$lat1, lat2=$lat2")
+            throw GeneralException(ErrorStatus.MAP_LATITUDE_OUT_OF_RANGE)
 
         if (lng1 !in -180.0..180.0 || lng2 !in -180.0..180.0)
-            throw IllegalArgumentException("경도는 -180~180 사이여야 합니다. 요청 값: lng1=$lng1, lng2=$lng2")
+            throw GeneralException(ErrorStatus.MAP_LONGITUDE_OUT_OF_RANGE)
 
-        if (lat1 <= lat2)
-            throw IllegalArgumentException("좌측상단(lat1)이 우측하단(lat2)보다 위에 있어야 합니다. lat1=$lat1, lat2=$lat2")
-
-        if (lng1 >= lng2)
-            throw IllegalArgumentException("좌측상단(lng1)이 우측하단(lng2)보다 왼쪽에 있어야 합니다. lng1=$lng1, lng2=$lng2")
-
+        if (lat1 <= lat2 || lng1 >= lng2)
+            throw GeneralException(ErrorStatus.MAP_INVALID_COORDINATE_ORDER)
 
         // Place 목록 조회
         val placeList = placeRepository.findPlacesByLocationAndType(

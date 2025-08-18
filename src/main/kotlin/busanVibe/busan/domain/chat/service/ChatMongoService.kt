@@ -53,7 +53,7 @@ class ChatMongoService(
             type = chatMessage.type?: MessageType.CHAT,
             userId = currentUser.id,
             message = chatMessage.message?:"",
-            time = chatMessage.time?: LocalDateTime.now(),
+            time = LocalDateTime.now(),
         )
 
         // 채팅 저장

@@ -38,6 +38,12 @@ enum class ErrorStatus(
     INVALID_PAGE_SIZE_MINUS(HttpStatus.BAD_REQUEST, "CHAT4002", "페이지 크기는 음수일 수 없습니다."),
     INVALID_PAGE_SIZE_BIG(HttpStatus.BAD_REQUEST, "CHAT4003", "페이지 크기는 30을 넘을 수 없습니다."),
     CHAT_USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "CHAT4004", "채팅에 해당하는 유저를 찾을 수 없습니다."),
+
+    // 지도 관련 에러
+    MAP_LATITUDE_OUT_OF_RANGE(HttpStatus.BAD_REQUEST, "MAP4001", "위도는 -90~90 사이여야 합니다."),
+    MAP_LONGITUDE_OUT_OF_RANGE(HttpStatus.BAD_REQUEST, "MAP4002", "경도는 -180~180 사이여야 합니다."),
+    MAP_INVALID_COORDINATE_ORDER(HttpStatus.BAD_REQUEST, "MAP4003", "좌측상단 좌표가 우측하단 좌표보다 위/왼쪽에 있어야 합니다."),
+
     ;
 
     override fun getReason(): ErrorReasonDTO {
