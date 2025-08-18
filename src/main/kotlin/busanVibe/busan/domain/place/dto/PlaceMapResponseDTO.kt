@@ -19,8 +19,8 @@ class PlaceMapResponseDTO {
         val name: String,
         val type: String,
         val congestionLevel: Int,
-        val latitude: BigDecimal,
-        val longitude: BigDecimal
+        val latitude: BigDecimal? = null,
+        val longitude: BigDecimal? = null
     )
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
@@ -30,8 +30,8 @@ class PlaceMapResponseDTO {
         val congestionLevel: Int,
         val grade: Float,
         val reviewAmount: Int,
-        val latitude: BigDecimal,
-        val longitude: BigDecimal,
+        val latitude: BigDecimal?,
+        val longitude: BigDecimal?,
         val address: String,
         @get:JsonProperty("is_open")
         val isOpen: Boolean,
