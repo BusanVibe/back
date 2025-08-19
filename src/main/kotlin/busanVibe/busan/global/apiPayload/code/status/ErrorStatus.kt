@@ -21,6 +21,11 @@ enum class ErrorStatus(
     // 사용자 관련 에러
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4004", "유저를 찾을 수 없습니다."),
 
+    // 로그인 관련
+    SIGNUP_EMAIL_EXISTS(HttpStatus.BAD_REQUEST, "LOGIN4001", "이미 존재하는 이메일입니다."),
+    INVALID_EMAIL_STYLE(HttpStatus.BAD_REQUEST, "LOGIN4002", "이메일 형식이 올바르지 않습니다."),
+    LOGIN_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "LOGIN4003", "비밀번호가 올바르지 않습니다."),
+
     // 명소 관련 에러
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE4004", "명소를 찾을 수 없습니다."),
 
