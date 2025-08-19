@@ -50,7 +50,7 @@ class FestivalQueryService(
 //        val festivalIdList: List<Long> = festivalList.mapNotNull { it.id }
 
         // 좋아요 리스트 조회
-        val festivalLikeList: List<FestivalLike> = festivalLikesRepository.findAllByFestivalIn(festivalList)
+        val festivalLikeList: List<FestivalLike> = festivalLikesRepository.findLikeByFestival(festivalList)
 
         // 좋아요 수 계산
         val likeCountMap: Map<Long, Int> = festivalLikeList
