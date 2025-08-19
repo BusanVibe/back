@@ -40,7 +40,9 @@ class SecurityConfig {
                         "/v3/api-docs/**",
                         "/users/oauth/kakao",
                         "/ws-chat/**",
-                        "/users/guest/login"
+                        "/users/guest/login",
+                        "/users/login/**",
+                        "/users/signup/**"
                     ).permitAll()
                     .anyRequest().authenticated()
             }

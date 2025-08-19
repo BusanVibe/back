@@ -1,8 +1,11 @@
 package busanVibe.busan.domain.user.data
 
 import busanVibe.busan.domain.common.BaseEntity
+import busanVibe.busan.domain.user.enums.LoginType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -35,15 +38,22 @@ class User(
     @Column(nullable = true, length = 255)
      var profileImageUrl: String?,
 
+    @Column(nullable = true, length = 255)
+    var passwordHash: String? = null,
 
-) : BaseEntity(), UserDetails {
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    val loginType: LoginType
+
+
+    ) : BaseEntity(), UserDetails {
 
     override fun getAuthorities(): Collection<GrantedAuthority?>? {
         return arrayListOf(SimpleGrantedAuthority("ROLE_USER"))
     }
 
     override fun getPassword(): String? {
-        return null;
+        return passwordHash.toString();
     }
 
     override fun getUsername(): String? {
