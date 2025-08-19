@@ -20,9 +20,10 @@ class SearchController(
 
     @GetMapping("/search")
     fun searchResult(@RequestParam("option", defaultValue = "ALL") infoType: InfoType,
-                           @RequestParam("sort", defaultValue = "DEFAULT") sort: GeneralSortType): ApiResponse<SearchResultDTO.ListDto>{
+                   @RequestParam("sort", defaultValue = "DEFAULT") sort: GeneralSortType,
+                    @RequestParam("keyword", required = false, defaultValue = "") keyword: String): ApiResponse<SearchResultDTO.ListDto>{
 
-        val searchResult = searchQueryService.getSearchResult(infoType, sort)
+        val searchResult = searchQueryService.getSearchResult(infoType, sort, keyword)
         return ApiResponse.onSuccess(searchResult)
 
     }

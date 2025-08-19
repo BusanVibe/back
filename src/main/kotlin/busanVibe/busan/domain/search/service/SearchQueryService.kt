@@ -25,7 +25,7 @@ class SearchQueryService(
 ) {
 
     @Transactional(readOnly = true)
-    fun getSearchResult(infoType: InfoType, sort: GeneralSortType): SearchResultDTO.ListDto {
+    fun getSearchResult(infoType: InfoType, sort: GeneralSortType, keyword: String): SearchResultDTO.ListDto {
         val currentUser = AuthService().getCurrentUser()
 
         // 축제 + 혼잡도 검색 예외 처리
@@ -48,13 +48,29 @@ class SearchQueryService(
             else -> emptyList()
         }
 
+        // 좋아요 정보 조회
         val placeLikeList = placeLikeRepository.findLikeByPlace(places)
         val festivalLikeList = festivalLikeRepository.findLikeByFestival(festivals)
 
-        // 엔티티 List로 DTO List 반환
-        val resultList = searchUtil.listToSearchDTO(places, festivals, sort, currentUser, placeLikeList, festivalLikeList)
+        // 엔티티 List로 DTO List 생성
+        val infoDtoList = searchUtil.listToSearchDTO(places, festivals, sort, currentUser, placeLikeList, festivalLikeList)
 
+        // 키워드 필터링 후 List 생성
+        val resultList: MutableList<SearchResultDTO.InfoDto> =
+            if (keyword.isNotEmpty()) { // 키워드가 존재하면, 이름에 키워드가 존재하지 않는 항목들을 제거
+                infoDtoList.toMutableList().apply { removeIf { !containKeyword(it, keyword) } }
+            } else {
+                infoDtoList.toMutableList()
+            }
+
+        // 반환
         return SearchResultDTO.ListDto(sort.name, resultList)
+    }
+
+    private fun containKeyword(infoDto: SearchResultDTO.InfoDto, keyword: String): Boolean {
+        val name = infoDto.name.replace(" ", "").lowercase()
+        val key = keyword.replace(" ", "").lowercase()
+        return name.contains(key)
     }
 
 }
