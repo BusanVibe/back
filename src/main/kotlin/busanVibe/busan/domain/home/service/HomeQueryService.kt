@@ -74,7 +74,7 @@ class HomeQueryService(
                 latitude = place.latitude?.toDouble(),
                 longitude = place.longitude?.toDouble(),
                 address = place.address,
-                isLiked = place.placeLikes.any { it.user == currentUser }
+                isLike = place.placeLikes.any { it.user == currentUser }
             )
         }
     }

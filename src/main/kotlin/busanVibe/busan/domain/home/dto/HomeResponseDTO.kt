@@ -34,8 +34,8 @@ class HomeResponseDTO {
         val latitude: Double?,
         val longitude: Double?,
         val address: String,
-        @get:JsonProperty("is_liked")
-        val isLiked: Boolean
+        @get:JsonProperty("is_like")
+        val isLike: Boolean
     )
 
 }

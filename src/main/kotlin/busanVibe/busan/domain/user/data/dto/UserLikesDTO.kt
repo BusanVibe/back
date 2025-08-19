@@ -17,12 +17,12 @@ class UserLikesDTO {
         val id: Long? = null,
         val name: String,
         val address: String,
-        @get:JsonProperty("is_liked")
-        val isLiked: Boolean,
+        @get:JsonProperty("is_like")
+        val isLike: Boolean,
 //        val startDate: String? = null,
 //        val endDate: String? = null,
         @get:JsonProperty("is_end")
-        val isEnd: Boolean?
+        val isEnd: Boolean?,
     )
 
 }
