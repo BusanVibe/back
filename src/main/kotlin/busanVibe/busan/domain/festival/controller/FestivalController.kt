@@ -22,11 +22,10 @@ class FestivalController(
 ) {
 
     @GetMapping
-    @Operation(summary = "지역축제 목록 조회 API")
     fun festivalList(
         @RequestParam("sort", required = false) sort: FestivalSortType,
         @RequestParam("status", required = false)status: FestivalStatus
-    ):ApiResponse<FestivalListResponseDTO.ListDto>?{
+    ):ApiResponse<FestivalListResponseDTO.ListDto>{
 
         val festivalList = festivalQueryService.getFestivalList(sort, status)
         return ApiResponse.onSuccess(festivalList);
