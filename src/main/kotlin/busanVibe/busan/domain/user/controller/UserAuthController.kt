@@ -27,6 +27,7 @@ class UserAuthController (
 ){
 
     @GetMapping("/oauth/kakao")
+    @Operation(hidden = true)
     fun callBack(@RequestParam("code") code: String): ResponseEntity<Void> {
         val userResponse: UserLoginResponseDTO.LoginDto = userCommandService.loginOrRegisterByKakao(code)
         val redirectHeader = loginRedirectUtil.getRedirectHeader(userResponse)

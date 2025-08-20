@@ -9,6 +9,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -49,6 +50,29 @@ class ExceptionAdvice : ResponseEntityExceptionHandler() {
         }
 
         return handleExceptionInternalArgs(ex, HttpHeaders.EMPTY, ErrorStatus.BAD_REQUEST, request, errors)
+    }
+
+    // 잘못된 body 요청 처리
+    override fun handleHttpMessageNotReadable(
+        e: HttpMessageNotReadableException,
+        headers: HttpHeaders,
+        status: HttpStatusCode,
+        request: WebRequest
+    ): ResponseEntity<Any>? {
+        val errorMessage = when {
+            e.message?.contains("Enum") == true -> "요청 값이 올바르지 않습니다. Enum 타입을 확인해주세요."
+            e.message?.contains("JSON parse error") == true -> "요청 Body의 JSON 형식이 올바르지 않습니다."
+            e.message?.contains("Required request body is missing") == true -> "요청 Body가 비어있습니다."
+            else -> "잘못된 요청 본문입니다. 요청 형식을 확인해주세요."
+        }
+
+        return handleExceptionInternalArgs(
+            e,
+            headers,
+            ErrorStatus.BAD_REQUEST,
+            request,
+            mapOf("body" to errorMessage)
+        )
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)
@@ -131,6 +155,9 @@ class ExceptionAdvice : ResponseEntityExceptionHandler() {
         val body = ApiResponse.onFailure(errorCommonStatus.code, errorCommonStatus.message, errorPoint)
         return super.handleExceptionInternal(e, body, headers, status, request)
     }
+
+
+
 
     private fun handleExceptionInternalArgs(
         e: Exception,

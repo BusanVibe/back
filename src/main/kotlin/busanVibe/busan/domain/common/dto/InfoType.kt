@@ -11,7 +11,7 @@ enum class InfoType(
     // 명소
     SIGHT("명소", "SIGHT", PlaceType.SIGHT),
     RESTAURANT("식당", "RESTAURANT", PlaceType.RESTAURANT),
-    CAFE("카페", "CAFE", PlaceType.CAFE),
+//    CAFE("카페", "CAFE", PlaceType.CAFE),
     CULTURE("문화시설", "CULTURE", PlaceType.CULTURE),
     // 축제
     FESTIVAL("축제", "FESTIVAL"),

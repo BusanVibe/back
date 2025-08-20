@@ -14,7 +14,7 @@ enum class PlaceType(
     ALL("전체", "ALL", "", "", ""),
     SIGHT("관광지", "SIGHT", "12", "useTime", "restDate"),
     RESTAURANT("식당", "RESTAURANT", "39", "openTimeFood", "restDateFood"),
-    CAFE("카페", "CAFE", "00", "openTimeFood", "restDateFood"),
+//    CAFE("카페", "CAFE", "00", "openTimeFood", "restDateFood"),
     CULTURE("문화시설", "CULTURE", "14", "useTimeCulture", "restDateCulture")
     ;
 
