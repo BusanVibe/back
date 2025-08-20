@@ -36,7 +36,7 @@ class SearchQueryService(
         // 명소 타입별 조회
         val places = when (infoType) {
             InfoType.ALL -> placeRepository.findAllWithLikesAndOpenTime()
-            InfoType.CAFE -> placeRepository.findAllWithLikesAndOpenTimeByType(PlaceType.CAFE)
+//            InfoType.CAFE -> placeRepository.findAllWithLikesAndOpenTimeByType(PlaceType.CAFE)
             InfoType.RESTAURANT -> placeRepository.findAllWithLikesAndOpenTimeByType(PlaceType.RESTAURANT)
             InfoType.SIGHT -> placeRepository.findAllWithLikesAndOpenTimeByType(PlaceType.SIGHT)
             else -> emptyList()

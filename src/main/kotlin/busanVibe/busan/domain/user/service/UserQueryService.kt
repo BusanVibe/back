@@ -49,7 +49,7 @@ class UserQueryService(
         // 명소 조회
         val places = when(infoType){
             InfoType.ALL -> placeRepository.findLikePlace(user)
-            InfoType.RESTAURANT, InfoType.SIGHT, InfoType.CAFE -> placeRepository.findLikePlaceByType(
+            InfoType.RESTAURANT, InfoType.SIGHT -> placeRepository.findLikePlaceByType(
                 infoType.placeType?: throw GeneralException(ErrorStatus.SEARCH_INVALID_CONDITION),
                 user
              )

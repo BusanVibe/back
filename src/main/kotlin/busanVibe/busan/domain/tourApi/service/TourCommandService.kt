@@ -90,7 +90,7 @@ class TourCommandService(
     private fun getUseTime(placeType: PlaceType, introItem: PlaceIntroductionItem?): String =
         when (placeType) {
             PlaceType.ALL -> introItem?.useTime
-            PlaceType.CAFE -> introItem?.openTimeFood
+//            PlaceType.CAFE -> introItem?.openTimeFood
             PlaceType.RESTAURANT -> introItem?.openTimeFood
             PlaceType.SIGHT -> introItem?.useTime
             PlaceType.CULTURE -> introItem?.useTimeCulture
@@ -99,7 +99,7 @@ class TourCommandService(
     private fun getRest(placeType: PlaceType, introItem: PlaceIntroductionItem?): String =
         when (placeType) {
             PlaceType.ALL -> introItem?.restDate
-            PlaceType.CAFE -> introItem?.restDateFood
+//            PlaceType.CAFE -> introItem?.restDateFood
             PlaceType.RESTAURANT -> introItem?.restDateFood
             PlaceType.SIGHT -> introItem?.restDate
             PlaceType.CULTURE -> introItem?.restDateCulture
@@ -108,7 +108,7 @@ class TourCommandService(
     private fun getCenter(placeType: PlaceType, introItem: PlaceIntroductionItem?): String =
         when (placeType) {
             PlaceType.ALL -> introItem?.infoCenter
-            PlaceType.CAFE -> introItem?.infoCenterFood
+//            PlaceType.CAFE -> introItem?.infoCenterFood
             PlaceType.RESTAURANT -> introItem?.infoCenterFood
             PlaceType.SIGHT -> introItem?.infoCenter
             PlaceType.CULTURE -> introItem?.infoCenterCulture

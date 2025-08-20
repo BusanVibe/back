@@ -22,6 +22,7 @@ class FestivalController(
 ) {
 
     @GetMapping
+    @Operation(summary = "지역축제 목록 조회")
     fun festivalList(
         @RequestParam("sort", required = false) sort: FestivalSortType,
         @RequestParam("status", required = false)status: FestivalStatus

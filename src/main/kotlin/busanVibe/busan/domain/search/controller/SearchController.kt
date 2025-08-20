@@ -5,6 +5,7 @@ import busanVibe.busan.domain.search.dto.SearchResultDTO
 import busanVibe.busan.domain.search.enums.GeneralSortType
 import busanVibe.busan.domain.search.service.SearchQueryService
 import busanVibe.busan.global.apiPayload.exception.ApiResponse
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,6 +20,7 @@ class SearchController(
 ) {
 
     @GetMapping("/search")
+    @Operation(summary = "검색 API", description = "통합 검색 API 입니다.<br><b>[option: Festival] + [sort: CONGESTION]</b> 조합은 안됩니다.")
     fun searchResult(@RequestParam("option", defaultValue = "ALL") infoType: InfoType,
                    @RequestParam("sort", defaultValue = "DEFAULT") sort: GeneralSortType,
                     @RequestParam("keyword", required = false, defaultValue = "") keyword: String): ApiResponse<SearchResultDTO.ListDto>{
