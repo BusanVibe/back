@@ -9,13 +9,12 @@ import busanVibe.busan.domain.chat.repository.ChatMongoRepository
 import busanVibe.busan.domain.user.data.User
 import busanVibe.busan.domain.user.repository.UserRepository
 import busanVibe.busan.domain.user.service.login.AuthService
-import busanVibe.busan.global.apiPayload.code.ErrorReasonDTO
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.GeneralException
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Pageable
 import org.springframework.data.redis.listener.ChannelTopic
-import org.springframework.http.HttpStatus
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -25,28 +24,14 @@ class ChatMongoService(
     private val redisPublisher: RedisPublisher,
     private val topic: ChannelTopic,
     private val userRepository: UserRepository,
-    private val messagingTemplate: SimpMessagingTemplate
 ) {
+
+    val log: Logger = LoggerFactory.getLogger(ChatMongoService::class.java)
 
     fun saveAndPublish(chatMessage: ChatMessageSendDTO) {
 
         // 현재 유저 조회
         val currentUser = AuthService().getCurrentUser()
-
-        // 값 없으면 "" 저장
-        val message = chatMessage.message ?: ""
-
-        // 200자 넘어갈 시 예외처리
-        if (message.length > 200) {
-            val errorDTO = ErrorReasonDTO(
-                httpStatus = HttpStatus.BAD_REQUEST,
-                code = ErrorStatus.CHAT_INVALID_LENGTH.code,
-                message = ErrorStatus.CHAT_INVALID_LENGTH.message,
-                isSuccess = false
-            )
-            messagingTemplate.convertAndSend("/sub/chat/error", errorDTO)
-            return  // 또는 throw 후 처리
-        }
 
         // 채팅 객체 생성
         val document = ChatMessage(
@@ -68,6 +53,7 @@ class ChatMongoService(
             userId = currentUser.id
         )
 
+        log.info("[CHAT] /POST/chat/send, 메시지 전송: $chatMessage")
         redisPublisher.publish(topic, receiveDto)
     }
 

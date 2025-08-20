@@ -6,8 +6,7 @@ import busanVibe.busan.domain.chat.service.ChatMongoService
 import busanVibe.busan.global.apiPayload.exception.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -22,8 +21,6 @@ class   ChatRestController(
     private val chatMongoService: ChatMongoService,
 ) {
 
-    val log: Logger = LoggerFactory.getLogger(ChatRestController::class.java)
-
     @PostMapping("/send")
     @Operation(summary = "채팅 전송 API",
                 description = """
@@ -33,8 +30,7 @@ class   ChatRestController(
                     - CHAT (구현O): 일반 채팅 
                     - BOT  (구현X): 챗봇 기능입니다. 본인에게만 웹소켓 메시지가 전송되고, 채팅방을 나갈 시 다시 볼 수 없습니다.
                 """)
-    fun sendMessage(@RequestBody chatMessage: ChatMessageSendDTO) {
-        log.info("POST /chat/send - 메시지 수신: $chatMessage")
+    fun sendMessage(@Valid @RequestBody chatMessage: ChatMessageSendDTO) {
         chatMongoService.saveAndPublish(chatMessage)
     }
 
