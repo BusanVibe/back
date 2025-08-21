@@ -2,6 +2,8 @@ package busanVibe.busan.global.config.webSocket
 
 import busanVibe.busan.domain.user.repository.UserRepository
 import busanVibe.busan.global.config.security.JwtTokenProvider
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.messaging.Message
 import org.springframework.messaging.MessageChannel
 import org.springframework.messaging.simp.stomp.StompCommand
@@ -16,9 +18,10 @@ class AuthChannelInterceptorAdapter(
     private val userRepository: UserRepository
 ) : ChannelInterceptor {
 
+    private val log: Logger = LoggerFactory.getLogger(AuthChannelInterceptorAdapter::class.java)
+
     override fun preSend(message: Message<*>, channel: MessageChannel): Message<*>? {
         val accessor = StompHeaderAccessor.wrap(message)
-
         if (StompCommand.CONNECT == accessor.command) {
             val authHeader = accessor.getFirstNativeHeader("Authorization")
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -35,7 +38,7 @@ class AuthChannelInterceptorAdapter(
                 IllegalArgumentException("User not found")
             }
 
-            println("웹소켓 연결 유저: id=${user.id}, email=${user.email}")
+            log.info("[Web Socket] 웹소켓 연결 유저: id=${user.id}, email=${user.email}")
 
             val auth = jwtTokenProvider.getAuthentication(token)
             accessor.user = auth
