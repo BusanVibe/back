@@ -17,10 +17,10 @@ class RedisSubscriber(
     private val log = LoggerFactory.getLogger(RedisSubscriber::class.java)
 
     override fun onMessage(message: Message, pattern: ByteArray?) {
-        val chatMessage = serializer.deserialize(message.body, ChatMessageReceiveDTO::class.java) as? ChatMessageReceiveDTO
+        val chatMessage = serializer.deserialize(message.body, ChatMessageReceiveDTO::class.java)
         if (chatMessage != null) {
-            log.info("🔔 수신된 메시지: {}", chatMessage)
             messagingTemplate.convertAndSend("/sub/chatroom", chatMessage)
+            log.info("🔔 수신된 메시지: {}", chatMessage)
         } else {
             log.warn("❌ 수신된 메시지를 ChatMessageDTO로 변환할 수 없습니다.")
         }

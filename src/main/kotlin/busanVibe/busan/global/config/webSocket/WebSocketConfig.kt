@@ -24,9 +24,10 @@ class WebSocketConfig(
                 "http://localhost:*",
                 "http://127.0.0.1:*",
                 "https://busanvibe.site",
-                "https://*.busanvibe.site"
+                "https://*.busanvibe.site",
+                "ws://localhost:*",
+                "ws://127.0.0.1:*",
             )
-//            .addInterceptors(JwtHandshakeInterceptor(jwtTokenProvider, userRepository))
             .withSockJS()
             .setHeartbeatTime(10000)
     }
