@@ -28,6 +28,7 @@ enum class ErrorStatus(
 
     // 명소 관련 에러
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "PLACE4004", "명소를 찾을 수 없습니다."),
+    PLACE_ID_REQUIRED(HttpStatus.BAD_REQUEST, "PLACE4005", "placeId가 필요합니다."),
 
     // 축제 관련 에러
     FESTIVAL_NOT_FOUND(HttpStatus.NOT_FOUND, "FESTIVAL4004", "축제를 찾을 수 없습니다."),
