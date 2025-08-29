@@ -73,9 +73,9 @@ class Place(
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val placeImages: MutableSet<PlaceImage> = mutableSetOf(),
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @JoinColumn(name = "visitor_distribution_id")
-    val visitorDistribution: VisitorDistribution? = null,
+    val visitorDistribution: VisitorDistribution,
 
 ) : BaseEntity(){
 

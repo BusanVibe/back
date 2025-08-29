@@ -120,4 +120,10 @@ class PlaceResponseDTO {
 //        val content: String
 //    )
 
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+    data class LikeDto(
+        val success: Boolean,
+        val message: String,
+    )
+
 }

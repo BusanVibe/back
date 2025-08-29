@@ -19,7 +19,7 @@ class TourFestivalConverter {
             startDate = startDate?: Date(),
             endDate = endDate?: Date(),
             place = MAIN_PLACE ?: "장소없음",
-            introduction = ITEMCNTNTS ?: "",
+            introduction = ITEMCNTNTS?.removeTag() ?: "",
             fee = USAGE_AMOUNT?: "정보없음",
             phone = CNTCT_TEL ?: "정보없음",
             siteUrl = HOMEPAGE_URL ?: "정보없음",
@@ -50,6 +50,11 @@ class TourFestivalConverter {
         if (dateStr.isNullOrBlank()) return null
         val end = tryParseStartEnd(dateStr, false)
         return end?.let { Date.from(it.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()) }
+    }
+
+    // 문자열 속 태그 제거 메서드
+    private fun String.removeTag(): String{
+        return this.replace(Regex("<[^>]*>"), "")
     }
 
     private fun tryParseStartEnd(dateStr: String, isStart: Boolean): LocalDate? {
