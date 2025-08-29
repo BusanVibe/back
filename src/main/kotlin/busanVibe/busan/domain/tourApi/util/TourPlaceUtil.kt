@@ -29,6 +29,7 @@ class TourPlaceUtil(
     private val mobileOs:String = "AND"
     private val mobileApp: String = "busanvibe"
     private val numOfRows: String = "10"
+    private val pageNum: String = "0"
 
     // webclient 응답 버퍼 증가
     private val strategies = org.springframework.web.reactive.function.client.ExchangeStrategies.builder()
@@ -46,7 +47,7 @@ class TourPlaceUtil(
 
         val url = StringBuilder("https://apis.data.go.kr/B551011/KorService2/areaBasedList2")
             .append("?numOfRows=").append(numOfRows)
-            .append("&pageNo=0")
+            .append("&pageNo=").append(pageNum)
             .append("&MobileOS=").append(mobileOs)
             .append("&MobileApp=").append(mobileApp)
             .append("&contentTypeId=").append(placeTypeCode)
