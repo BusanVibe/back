@@ -24,4 +24,6 @@ class FestivalListResponseDTO {
         val likeAmount: Int,
     )
 
+
+
 }

@@ -1,14 +1,17 @@
 package busanVibe.busan.domain.festival.controller
 
 import busanVibe.busan.domain.festival.dto.FestivalDetailsDTO
+import busanVibe.busan.domain.festival.dto.FestivalLikeResponseDTO
 import busanVibe.busan.domain.festival.dto.FestivalListResponseDTO
 import busanVibe.busan.domain.festival.enums.FestivalSortType
 import busanVibe.busan.domain.festival.enums.FestivalStatus
+import busanVibe.busan.domain.festival.service.FestivalCommandService
 import busanVibe.busan.domain.festival.service.FestivalQueryService
 import busanVibe.busan.global.apiPayload.exception.ApiResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -18,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/festivals")
 class FestivalController(
-    private val festivalQueryService: FestivalQueryService
+    private val festivalQueryService: FestivalQueryService,
+    private val festivalCommandService: FestivalCommandService
 ) {
 
     @GetMapping
@@ -40,6 +44,14 @@ class FestivalController(
 
         val festivalDetails = festivalQueryService.getFestivalDetails(festivalId)
         return ApiResponse.onSuccess(festivalDetails);
+    }
+
+    @PatchMapping("/like/{festivalId}")
+    @Operation(summary = "지역축제 좋아요 API",
+                description = "지역축제 좋아요 API 입니다. 이미지 좋아요를 누른 경우 좋아요가 취소됩니다.")
+    fun like(@PathVariable("festivalId") festivalId: Long?): ApiResponse<FestivalLikeResponseDTO>{
+        val likeDTO = festivalCommandService.like(festivalId)
+        return ApiResponse.onSuccess(likeDTO);
     }
 
 }
