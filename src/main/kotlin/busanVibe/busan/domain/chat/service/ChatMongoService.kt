@@ -108,6 +108,8 @@ class ChatMongoService(
 
     fun getChatHistory(cursorId: String?, pageSize: Int = 15): ChatMessageResponseDTO.ListDto {
 
+        // 요청값 검증
+        // pageSize
         if(pageSize < 0){
             throw GeneralException(ErrorStatus.INVALID_PAGE_SIZE_MINUS)
         }else if (pageSize > 30) {
@@ -118,11 +120,15 @@ class ChatMongoService(
         val currentUser = AuthService().getCurrentUser()
 
         // 조회 -> List<ChatMessage> 변수 선언 및 초기화
-        val chatHistory: List<ChatMessage> = if (cursorId != null) { // 처음이면 cursorId 없이 조회
-            chatMongoRepository.findByIdLessThanAndTypeOrderByTimeDesc(cursorId, MessageType.CHAT, Pageable.ofSize(pageSize))
-        } else { // 처음 아니면 cursorId로 조회
+        // 채팅 기록 조회
+        val chatHistory: List<ChatMessage> = if (cursorId.isNullOrBlank()) {
+            // cursorId가 없으면: 최신 메시지 조회 (처음 불러올 때)
             chatMongoRepository.findAllByTypeOrderByTimeDesc(MessageType.CHAT, Pageable.ofSize(pageSize))
+        } else {
+            // cursorId가 있으면: 이전 메시지 이어서 조회 (cursorId보다 작은 메시지)
+            chatMongoRepository.findByIdLessThanAndTypeOrderByTimeDesc(cursorId, MessageType.CHAT, Pageable.ofSize(pageSize))
         }
+
 
         // userId List 저장. 바로 뒤에 userId로 User 정보들을 먼저 찾고, 그 뒤에 DTO 변환
         val userIdList: List<Long> = chatHistory.mapNotNull { it -> it.userId }.toList()
