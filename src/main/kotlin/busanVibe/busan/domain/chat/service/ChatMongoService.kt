@@ -121,7 +121,7 @@ class ChatMongoService(
 
         // 조회 -> List<ChatMessage> 변수 선언 및 초기화
         // 채팅 기록 조회
-        val chatHistory: List<ChatMessage> = if (cursorId.isNullOrBlank()) {
+        val chatHistory: List<ChatMessage> = if (cursorId.isNullOrBlank() || cursorId == "null") {
             // cursorId가 없으면: 최신 메시지 조회 (처음 불러올 때)
             chatMongoRepository.findAllByTypeOrderByTimeDesc(MessageType.CHAT, Pageable.ofSize(pageSize))
         } else {
