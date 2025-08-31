@@ -11,10 +11,13 @@ import busanVibe.busan.domain.user.repository.UserRepository
 import busanVibe.busan.domain.user.service.login.AuthService
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.GeneralException
+import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.Sort
 import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -137,15 +140,19 @@ class ChatMongoService(
 
         // 현재 로그인한 유저 조회
         val currentUser = AuthService().getCurrentUser()
+        val currentUserId: Long = currentUser.id ?: throw ExceptionHandler(ErrorStatus.USER_NOT_FOUND)
+
+        // Pageable 객체 생성
+        val pageable = PageRequest.of(0, pageSize, Sort.by(Sort.Direction.DESC, "time"))
 
         // 조회 -> List<ChatMessage> 변수 선언 및 초기화
         // 채팅 기록 조회
         val chatHistory: List<ChatMessage> = if (cursorId.isNullOrBlank() || cursorId == "null") {
             // cursorId가 없으면: 최신 메시지 조회 (처음 불러올 때)
-            chatMongoRepository.findAllByTypeOrderByTimeDesc(MessageType.CHAT, Pageable.ofSize(pageSize))
+            chatMongoRepository.findAllWithBotFilter(currentUserId, pageable)
         } else {
             // cursorId가 있으면: 이전 메시지 이어서 조회 (cursorId보다 작은 메시지)
-            chatMongoRepository.findByIdLessThanAndTypeOrderByTimeDesc(cursorId, MessageType.CHAT, Pageable.ofSize(pageSize))
+            chatMongoRepository.findByIdLessThanWithBotFilter(currentUserId, cursorId, pageable)
         }
 
 

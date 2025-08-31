@@ -4,11 +4,15 @@ import busanVibe.busan.domain.chat.domain.ChatMessage
 import busanVibe.busan.domain.chat.enums.MessageType
 import org.springframework.data.domain.Pageable
 import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.data.mongodb.repository.Query
 
 interface ChatMongoRepository: MongoRepository<ChatMessage, String> {
-    fun findAllByOrderByTimeDesc(pageable: Pageable): List<ChatMessage>
-    fun findByIdLessThanOrderByTimeDesc(id: String, pageable: Pageable): List<ChatMessage>
-    fun findAllByTypeOrderByTimeDesc(type: MessageType, pageable: Pageable): List<ChatMessage>
-    fun findByIdLessThanAndTypeOrderByTimeDesc(id: String, type: MessageType, pageable: Pageable): List<ChatMessage>
+
+    @Query("{ \"\$or\": [ { \"type\": { \"\$in\": ['BOT_REQUEST', 'BOT_RESPONSE'] }, \"userId\": ?0 }, { \"type\": { \"\$nin\": ['BOT_REQUEST', 'BOT_RESPONSE'] } } ] }")
+    fun findAllWithBotFilter(userId: Long, pageable: Pageable): List<ChatMessage>
+
+    @Query("{ \"\$and\": [ { \"_id\": { \"\$lt\": ?1 } }, { \"\$or\": [ { \"type\": { \"\$in\": ['BOT_REQUEST', 'BOT_RESPONSE'] }, \"userId\": ?0 }, { \"type\": { \"\$nin\": ['BOT_REQUEST', 'BOT_RESPONSE'] } } ] } ] }")
+    fun findByIdLessThanWithBotFilter(userId: Long, cursorId: String, pageable: Pageable): List<ChatMessage>
+
 
 }
