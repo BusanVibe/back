@@ -52,7 +52,7 @@ class PlaceQueryService(
         val placeIdList: List<Long> = placeList.mapNotNull { it.id }
 
         // 좋아요 리스트 조회
-        val placeLikes: List<PlaceLike> = placeLikeRepository.findAllByPlaceIn(placeList)
+        val placeLikes: List<PlaceLike> = placeLikeRepository.findAllByPlaceInFetchUser(placeList)
 
         // 좋아요 수 계산: Map<Long, Int>
         val likeCountMap: Map<Long, Int> = placeLikes
