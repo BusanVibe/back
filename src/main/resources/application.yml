@@ -64,5 +64,6 @@ openai:
 tourAPI:
   key: ${TOUR_API_KEY}
 
-
-
+image:
+  chat-bot: ${IMAGE_CHATBOT}
+  guest: ${IMAGE_GUEST}

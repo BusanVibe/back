@@ -13,6 +13,7 @@ import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.GeneralException
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Pageable
 import org.springframework.data.redis.listener.ChannelTopic
 import org.springframework.stereotype.Service
@@ -24,7 +25,9 @@ class ChatMongoService(
     private val redisPublisher: RedisPublisher,
     private val topic: ChannelTopic,
     private val userRepository: UserRepository,
-    private val openAiService: OpenAiService
+    private val openAiService: OpenAiService,
+    @Value("\${image.chat-bot}")
+    private val chatBotImage: String
 ) {
 
     val log: Logger = LoggerFactory.getLogger(ChatMongoService::class.java)
@@ -97,7 +100,7 @@ class ChatMongoService(
             val message = openAiService.chatToOpenAI(chat.message)
             ChatMessageReceiveDTO(
                 name = "챗봇",
-                imageUrl = null,
+                imageUrl = chatBotImage,
                 message = message,
                 time = timestamp,
                 type = type,
