@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.mongodb.core.MongoTemplate
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories
 
 @Configuration
@@ -23,5 +24,16 @@ class MongoConfig(
     fun mongoTemplate(): MongoTemplate {
         return MongoTemplate(mongoClient(), mongoProperties.database)
     }
+
+    @Bean
+    fun customConversions(
+        localDateTimeConverter: LocalDateTimeToDateKstConverter,
+        dateToLocalDateTimeConverter: DateToLocalDateTimeKstConverter,
+    ) =  MongoCustomConversions (
+        listOf(
+            localDateTimeConverter,
+            dateToLocalDateTimeConverter
+        )
+    )
 
 }

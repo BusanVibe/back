@@ -12,7 +12,6 @@ import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.GeneralException
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
 import busanVibe.busan.global.config.security.JwtTokenProvider
-import io.lettuce.core.KillArgs.Builder.user
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
@@ -35,7 +34,10 @@ class UserCommandService(
     private val userRepository: UserRepository,
     private val userConverter: UserConverter,
     private val jwtTokenProvider: JwtTokenProvider,
-    private val passwordEncoder: PasswordEncoder
+    private val passwordEncoder: PasswordEncoder,
+    @Value("\${image.guest}")
+    private val guestImage: String
+
 ) {
 
     @Value("\${spring.kakao.client-id}")
@@ -49,8 +51,8 @@ class UserCommandService(
     fun guestLogin(): UserLoginResponseDTO.LoginDto {
 
         val email = UUID.randomUUID().toString().substring(0,7) + "@busanvibe.com"
-        val nickname = UUID.randomUUID().toString().substring(0, 7)
-        val profileImageUrl: String? = null
+        val nickname = "guest" + UUID.randomUUID().toString().substring(0, 4)
+        val profileImageUrl: String? = guestImage
 
         return isNewUser(email, nickname, profileImageUrl, LoginType.GUEST)
     }
