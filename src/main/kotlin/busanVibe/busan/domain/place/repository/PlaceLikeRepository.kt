@@ -8,7 +8,14 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface PlaceLikeRepository: JpaRepository<PlaceLike, Long> {
-    fun findAllByPlaceIn(placeList: List<Place>): List<PlaceLike>
+
+    @Query("""
+        SELECT pl 
+        FROM PlaceLike pl
+        JOIN FETCH pl.user
+        WHERE pl.place IN :placeList
+    """)
+    fun findAllByPlaceInFetchUser(@Param("placeList") placeList: List<Place>): List<PlaceLike>
 
     @Query("SELECT pl FROM PlaceLike pl WHERE pl.place IN :places")
     fun findLikeByPlace(@Param("places") placeList: List<Place>): List<PlaceLike>
