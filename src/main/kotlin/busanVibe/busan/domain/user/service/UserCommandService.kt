@@ -51,7 +51,7 @@ class UserCommandService(
     fun guestLogin(): UserLoginResponseDTO.LoginDto {
 
         val email = UUID.randomUUID().toString().substring(0,7) + "@busanvibe.com"
-        val nickname = UUID.randomUUID().toString().substring(0, 7)
+        val nickname = "guest" + UUID.randomUUID().toString().substring(0, 4)
         val profileImageUrl: String? = guestImage
 
         return isNewUser(email, nickname, profileImageUrl, LoginType.GUEST)
