@@ -28,11 +28,12 @@ class   ChatRestController(
                     채팅 전송 API 입니다. 해당 API 호출 시 메시지가 전송되고, 채팅 웹소켓에 연결된 유저들에게 메시지가 전송됩니다.
                     메시지의 길이는 최대 200글자입니다.
                     
-                    type : ['CHAT', 'BOT']
+                    type : ['CHAT', 'BOT_RESPONSE', 'BOT_REQUEST']
                     
                     메시지가 '/' 로 시작하면 챗봇 답변을 응답합니다.
                     일반 채팅은 웹소켓으로 메시지를 전송하고, 챗봇은 웹소켓 메시지를 전송하지 않습니다.
                     따라서 일반 채팅은 웹소켓으로 받은 메시지로 활용하고, 챗봇에게 받은 답변은 해당 API의 응답 결과를 활용해주세요.
+                    
                 """)
     fun sendMessage(@Valid @RequestBody chatMessage: ChatMessageSendDTO): ApiResponse<ChatMessageReceiveDTO> {
         val receiveDTO = chatMongoService.saveAndPublish(chatMessage)

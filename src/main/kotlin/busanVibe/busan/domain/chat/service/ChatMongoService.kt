@@ -49,9 +49,9 @@ class ChatMongoService(
         val message = chatMessage.message.trim()
 
         // 받은 메세지로 타입 구분
-        // '/'로 시작하면 챗봇(BOT)
+        // 일반 메시지는 CHAT, 챗봇 요청은 BOT_REQUEST
         val type: MessageType = if(message[0] == '/'){
-            MessageType.BOT
+            MessageType.BOT_REQUEST
         }else{
             MessageType.CHAT
         }
@@ -67,16 +67,32 @@ class ChatMongoService(
             time = now
         )
 
-        // 일반 채팅일 경우 채팅 기록 저장
+        // 사용자가 보낸 메시지 저장
         chatMongoRepository.save(chat)
 
-        // 유저들에게 웹소켓으로 전달할 메시지의 DTO 생성
+        // 유저들에게 웹소켓으로 전달할 메시지의 DTO 생성 - CHAT
         val receiveDto = buildReceiveDto(type, currentUser, chat, now)
 
         // 일반 채팅일 경우에만 유저들에게 웹소켓 메시지 보냄
-        if(type == MessageType.CHAT) {
+        if(receiveDto.type == MessageType.CHAT) {
             redisPublisher.publish(topic, receiveDto)
         }
+
+        // OpenAI 챗봇 요청
+        if (receiveDto.type == MessageType.BOT_RESPONSE) {
+            // openai 요청
+            openAiService.chatToOpenAI(chat.message)
+            // 챗봇 대답 저장
+            chatMongoRepository.save(
+                ChatMessage(
+                    type = MessageType.BOT_RESPONSE,
+                    userId = currentUser.id,
+                    message = receiveDto.message,
+                    time = chat.time
+                )
+            )
+        }
+
         return receiveDto
     }
 
@@ -103,8 +119,8 @@ class ChatMongoService(
                 imageUrl = chatBotImage,
                 message = message,
                 time = timestamp,
-                type = type,
-                userId = -1
+                type = MessageType.BOT_RESPONSE,
+                userId = currentUser.id
             )
         }
     }
