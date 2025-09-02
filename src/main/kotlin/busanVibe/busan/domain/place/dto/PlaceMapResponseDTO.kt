@@ -28,8 +28,6 @@ class PlaceMapResponseDTO {
         val id: Long?,
         val name: String,
         val congestionLevel: Int,
-        val grade: Float,
-        val reviewAmount: Int,
         val latitude: BigDecimal?,
         val longitude: BigDecimal?,
         val address: String,

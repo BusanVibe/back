@@ -11,8 +11,6 @@ import busanVibe.busan.domain.place.repository.PlaceImageRepository
 import busanVibe.busan.domain.place.repository.PlaceLikeRepository
 import busanVibe.busan.domain.place.repository.PlaceRepository
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
-import busanVibe.busan.domain.review.domain.Review
-import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.domain.user.data.User
 import busanVibe.busan.domain.user.service.login.AuthService
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
@@ -28,7 +26,6 @@ class PlaceQueryService(
     private val placeRepository: PlaceRepository,
     private val placeLikeRepository: PlaceLikeRepository,
     private val placeImageRepository: PlaceImageRepository,
-    private val reviewRepository: ReviewRepository,
     private val redisTemplate: StringRedisTemplate,
 ) {
 
@@ -114,8 +111,6 @@ class PlaceQueryService(
         val placeLikes: List<PlaceLike> = place.placeLikes.toList()
         val placeImages: List<PlaceImage> = place.placeImages.toList()
 
-        log.info("장소 리뷰 조회")
-        val placeReviews: List<Review> = reviewRepository.findForDetails(place)
 
         // 좋아요 여부 구함
         val isLike = placeLikes.any { it.user.id == currentUser.id }
@@ -123,30 +118,10 @@ class PlaceQueryService(
         return placeDetailsConverter.toSightDto(
             place = place,
             placeLikes = placeLikes,
-            placeReviews = placeReviews,
             placeImages = placeImages,
-            isLike
+            isLike = isLike
         )
 
-//        if(place.type == PlaceType.SIGHT){
-//            return placeDetailsConverter.toSightDto(
-//                place = place,
-//                placeLikes = placeLikes,
-//                placeReviews = placeReviews,
-//                placeImages = placeImages,
-//                isLike
-//            )
-//        }
-//        else{
-//            return placeDetailsConverter.toRestaurantDto(
-//                place = place,
-//                placeLikes = placeLikes,
-//                placeReviews = placeReviews,
-//                placeImages = placeImages,
-//                placeOpenTime = place.openTime,
-//                isLike
-//            )
-//        }
 
     }
 

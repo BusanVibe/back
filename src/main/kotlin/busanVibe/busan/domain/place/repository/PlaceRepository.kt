@@ -26,7 +26,6 @@ interface PlaceRepository: JpaRepository<Place, Long> {
             LEFT JOIN FETCH p.placeLikes pl
             LEFT JOIN FETCH pl.user
             LEFT JOIN FETCH p.placeImages
-            LEFT JOIN FETCH p.openTime
             WHERE p.id = :placeId
         """
     )
@@ -36,10 +35,9 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     @Query(
     """
             SELECT p FROM Place p
-            LEFT JOIN FETCH p.openTime
-                    WHERE p.latitude BETWEEN :minLat AND :maxLat
-                      AND p.longitude BETWEEN :minLng AND :maxLng
-                      AND (:#{#type.name() == 'ALL'} = true OR p.type = :type)
+            WHERE p.latitude BETWEEN :minLat AND :maxLat
+              AND p.longitude BETWEEN :minLng AND :maxLng
+              AND (:#{#type.name() == 'ALL'} = true OR p.type = :type)
           """
     )
     fun findPlacesByLocationAndType(
@@ -53,7 +51,6 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     @Query(
         """
             SELECT p FROM Place p
-            LEFT JOIN FETCH p.openTime
             LEFT JOIN FETCH p.placeImages
             WHERE p.id = :placeId
         """
@@ -67,7 +64,6 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     @Query("""
         SELECT p FROM Place p 
         LEFT JOIN FETCH p.placeLikes pl
-         LEFT JOIN FETCH p.openTime
          LEFT JOIN FETCH p.placeImages
          LEFT JOIN FETCH pl.user
     """)
@@ -76,7 +72,6 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     @Query("""
         SELECT p FROM Place p 
         LEFT JOIN FETCH p.placeLikes pl
-         LEFT JOIN FETCH p.openTime
          LEFT JOIN FETCH p.placeImages
          LEFT JOIN FETCH pl.user 
         WHERE p.type = :type
@@ -87,7 +82,6 @@ interface PlaceRepository: JpaRepository<Place, Long> {
         """
             SELECT p FROM Place p
             LEFT JOIN FETCH p.placeImages
-            LEFT JOIN FETCH p.openTime
         """
     )
     fun findAllWithImages(): List<Place>
@@ -96,7 +90,6 @@ interface PlaceRepository: JpaRepository<Place, Long> {
         """
             SELECT DISTINCT p FROM Place p
             LEFT JOIN FETCH p.placeImages
-            LEFT JOIN FETCH p.openTime
             LEFT JOIN FETCH p.placeLikes pl
             LEFT JOIN FETCH pl.user
         """
@@ -108,7 +101,6 @@ interface PlaceRepository: JpaRepository<Place, Long> {
             SELECT DISTINCT p FROM Place p
             LEFT JOIN FETCH p.placeLikes pl
             LEFT JOIN FETCH p.placeImages
-            LEFT JOIN FETCH p.openTime
             LEFT JOIN FETCH pl.user
             WHERE pl.user = :user
         """
@@ -120,7 +112,6 @@ interface PlaceRepository: JpaRepository<Place, Long> {
             SELECT DISTINCT p FROM Place p
             LEFT JOIN FETCH p.placeLikes pl
             LEFT JOIN FETCH p.placeImages
-            LEFT JOIN FETCH p.openTime
             LEFT JOIN FETCH pl.user
             WHERE p.type = :type AND pl.user = :user
         """
