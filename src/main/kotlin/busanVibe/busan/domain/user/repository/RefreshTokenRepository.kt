@@ -15,7 +15,7 @@ class RefreshTokenRepository{
         this.redisTemplate = redisTemplate
     }
 
-    fun saveToken(userId: Long, refreshToken: String, expiration: Long) {
+    fun saveToken(userId: Long?, refreshToken: String, expiration: Long) {
         val key:String = "refreshToken:$refreshToken"
 
         redisTemplate
