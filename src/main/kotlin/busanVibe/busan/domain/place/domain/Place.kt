@@ -2,7 +2,6 @@ package busanVibe.busan.domain.place.domain
 
 import busanVibe.busan.domain.common.BaseEntity
 import busanVibe.busan.domain.place.enums.PlaceType
-import busanVibe.busan.domain.review.domain.Review
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -48,27 +47,14 @@ class Place(
     @Column(nullable = false, length = 50)
     val phone: String,
 
-    // -----
-
     @Column(nullable = false)
     val useTime: String,
 
     @Column(nullable = false)
     val restDate: String,
 
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "region_id", nullable = false)
-//    val region: Region,
-//
-    @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
-    val reviews: List<Review>,
-
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY)
     val placeLikes: Set<PlaceLike>,
-
-    @OneToOne(mappedBy = "place", fetch = FetchType.LAZY, optional = true)
-    val openTime: OpenTime? = null,
 
     @OneToMany(mappedBy = "place", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val placeImages: MutableSet<PlaceImage> = mutableSetOf(),

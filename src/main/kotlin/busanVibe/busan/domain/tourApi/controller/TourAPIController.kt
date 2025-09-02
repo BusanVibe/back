@@ -2,6 +2,7 @@ package busanVibe.busan.domain.tourApi.controller
 
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.tourApi.service.TourCommandService
+import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,12 +17,13 @@ class TourAPIController(
 ) {
 
     @PostMapping("/festivals")
-//    @Operation(hidden = true)
+    @Operation(hidden = true)
     fun saveFestivals(){
         tourCommandService.syncFestivalsFromApi()
     }
 
     @PostMapping("/place")
+    @Operation(hidden = true)
     fun savePlace(@RequestParam("place-type") placeType: PlaceType ){
         tourCommandService.getPlace(placeType)
     }

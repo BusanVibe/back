@@ -40,10 +40,6 @@ class PlaceResponseDTO {
 
         abstract val congestionLevel: Int
 
-        abstract val grade: Float?
-
-        abstract val reviewAmount: Int
-
         abstract val likeAmount: Int
 
         @get:JsonProperty("is_open")
@@ -63,8 +59,6 @@ class PlaceResponseDTO {
             override val type: String,
             override val img: List<String>,
             override val congestionLevel: Int,
-            override val grade: Float?,
-            override val reviewAmount: Int,
             override val likeAmount: Int,
             @get:JsonProperty("is_open")
             override val isOpen: Boolean,
@@ -77,48 +71,8 @@ class PlaceResponseDTO {
             val restDate: String
         ) : PlaceDetailsDto()
 
-//        @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-//        data class RestaurantDto(
-//            override val id: Long?,
-//            override val name: String,
-//            override val type: String,
-//            override val img: List<String>,
-//            override val congestionLevel: Int,
-//            override val grade: Float?,
-//            override val reviewAmount: Int,
-//            override val likeAmount: Int,
-//            @get:JsonProperty("is_open")
-//            override val isOpen: Boolean,
-//            override val address: String,
-//            override val phone: String,
-//            @get:JsonProperty("is_like")
-//            override val isLike: Boolean,
-//            val monOpen: String,
-//            val tueOpen: String,
-//            val wedOpen: String,
-//            val thuOpen: String,
-//            val friOpen: String,
-//            val satOpen: String,
-//            val sunOpen: String,
-//            val monClose: String,
-//            val tueClose: String,
-//            val wedClose: String,
-//            val thuClose: String,
-//            val friClose: String,
-//            val satClose: String,
-//            val sunClose: String,
-//            val review: List<ReviewDto>
-//        ) : PlaceDetailsDto()
     }
 
-//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-//    data class ReviewDto(
-//        val usrImg: String?,
-//        val usrName: String,
-//        val grade: Float,
-//        val date: String,
-//        val content: String
-//    )
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class LikeDto(

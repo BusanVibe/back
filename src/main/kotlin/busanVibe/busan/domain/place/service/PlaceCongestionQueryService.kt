@@ -8,8 +8,6 @@ import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.repository.PlaceRepository
 import busanVibe.busan.domain.place.repository.VisitorDistributionRepository
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
-import busanVibe.busan.domain.review.domain.Review
-import busanVibe.busan.domain.review.domain.repository.ReviewRepository
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.GeneralException
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
@@ -24,7 +22,6 @@ import java.time.LocalDateTime
 class PlaceCongestionQueryService(
     private val placeRepository: PlaceRepository,
     private val placeRedisUtil: PlaceRedisUtil,
-    private val reviewRepository: ReviewRepository,
     private val visitorDistributionRepository: VisitorDistributionRepository,
 ) {
 
@@ -96,17 +93,11 @@ class PlaceCongestionQueryService(
             .sortedBy { it.createdAt }
             .map { it.imgUrl }
 
-        // 리뷰 조회
-        val reviewSet: Set<Review> = reviewRepository.findByPlace(place).toSet()
-        val grade = if (reviewSet.isEmpty()) 0f 
-                    else reviewSet.map { it.score }.average().toFloat()
 
         return PlaceMapResponseDTO.PlaceDefaultInfoDto(
             id = place.id,
             name = place.name,
             congestionLevel = placeRedisUtil.getRedisCongestion(place.id),
-            grade = grade,
-            reviewAmount = reviewSet.size,
             latitude = place.latitude,
             longitude = place.longitude,
             address = place.address,
