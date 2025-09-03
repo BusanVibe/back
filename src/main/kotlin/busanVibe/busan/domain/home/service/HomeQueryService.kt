@@ -1,6 +1,7 @@
 package busanVibe.busan.domain.home.service
 
 import busanVibe.busan.domain.home.dto.HomeResponseDTO
+import busanVibe.busan.domain.place.domain.PlaceLike
 import busanVibe.busan.domain.place.repository.PlaceRepository
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
 import busanVibe.busan.domain.user.service.login.AuthService
@@ -74,7 +75,7 @@ class HomeQueryService(
                 latitude = place.latitude?.toDouble(),
                 longitude = place.longitude?.toDouble(),
                 address = place.address,
-                isLike = place.placeLikes.any { it.user == currentUser }
+                isLike = place.placeLikes.any { it.user.id == currentUser.id }
             )
         }
     }
