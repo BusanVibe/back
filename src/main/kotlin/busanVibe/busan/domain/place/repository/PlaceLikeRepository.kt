@@ -2,12 +2,13 @@ package busanVibe.busan.domain.place.repository
 
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.domain.PlaceLike
+import busanVibe.busan.domain.place.domain.PlaceLikeId
 import busanVibe.busan.domain.user.data.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface PlaceLikeRepository: JpaRepository<PlaceLike, Long> {
+interface PlaceLikeRepository: JpaRepository<PlaceLike, PlaceLikeId> {
 
     @Query("""
         SELECT pl 
