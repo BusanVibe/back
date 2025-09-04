@@ -38,4 +38,20 @@ class HomeResponseDTO {
         val isLike: Boolean
     )
 
+    // 큐레이션
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+    data class CurationList(
+        val curationList: List<CurationInfo>
+    )
+
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+    data class CurationInfo(
+        val id: Long?,
+        val name: String,
+        val duration: String,
+        val typeKr: String,
+        val typeEn: String,
+        val imgUrl: String
+    )
+
 }

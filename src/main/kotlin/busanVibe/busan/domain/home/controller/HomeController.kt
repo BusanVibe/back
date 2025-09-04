@@ -24,4 +24,17 @@ class HomeController(
         return ApiResponse.onSuccess(homeInfo)
     }
 
+    @GetMapping("/curation")
+    @Operation(summary = "홈화면 큐레이션 조회 API",
+            description =
+                    """
+                        임의의 명소 1개, 축제 2개 반환
+                        ( 이미지 없는것 베재, 장소는 관광지만 조회 )                    
+                    """
+    )
+    fun getHomeCuration(): ApiResponse<HomeResponseDTO.CurationList>{
+        val curations = homeQueryService.getCurations()
+        return ApiResponse.onSuccess(curations)
+    }
+
 }
