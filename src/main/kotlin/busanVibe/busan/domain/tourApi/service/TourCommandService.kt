@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.random.Random
 
 @Service
@@ -30,16 +31,16 @@ class TourCommandService(
     private val noInfo: String = "정보 없음"
     private val log: Logger = LoggerFactory.getLogger(TourCommandService::class.java)
 
-    fun syncFestivalsFromApi() {
+    fun syncFestivalsFromApi(pageSize: Int, pageNum: Int) {
         val converter = TourFestivalConverter()
-        val festivals = tourFestivalUtil.getFestivals().map { converter.run { it.toEntity() } }
+        val festivals = tourFestivalUtil.getFestivals(pageSize, pageNum).map { converter.run { it.toEntity() } }
         festivalRepository.saveAll(festivals)
     }
 
 
 //    @Transactional
-    fun getPlace(placeType: PlaceType) {
-        val apiResponse = tourPlaceUtil.getPlace(placeType).response
+    fun getPlace(placeType: PlaceType, pageSize: Int, pageNum: Int) {
+        val apiResponse = tourPlaceUtil.getPlace(placeType, pageSize, pageNum).response
         val items = apiResponse.body?.items?.item
 
         val placeList : MutableList<Place> = mutableListOf<Place>()
@@ -59,8 +60,8 @@ class TourCommandService(
                 contentId = apiItem.contentId,
                 name = apiItem.title.orNoInfo().removeTag(),
                 type = placeType,
-                latitude = apiItem.mapY?.toBigDecimal(),
-                longitude = apiItem.mapX?.toBigDecimal(),
+                latitude = apiItem.mapY?.toBigDecimal()?.setScale(4, RoundingMode.HALF_UP),
+                longitude = apiItem.mapX?.toBigDecimal()?.setScale(4, RoundingMode.HALF_UP),
                 address = apiItem.addr1.orNoInfo().removeTag(),
                 introduction = detailItem?.overview.orNoInfo().removeTag(),
                 phone = listOf(apiItem.tel, detailItem?.tel, getCenter(placeType, introItem))
