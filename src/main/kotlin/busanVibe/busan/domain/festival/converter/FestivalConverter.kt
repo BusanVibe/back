@@ -2,10 +2,11 @@ package busanVibe.busan.domain.festival.converter
 
 import busanVibe.busan.domain.festival.domain.Festival
 import busanVibe.busan.domain.festival.dto.FestivalListResponseDTO
-import java.text.SimpleDateFormat
-import java.util.Date
+import busanVibe.busan.domain.festival.util.FestivalDateUtil
 
 class FestivalConverter {
+
+    private val festivalDateUtil: FestivalDateUtil = FestivalDateUtil()
 
     fun toInfoDto(festival: Festival, festivalImageMap: Map<Long, String>, userLikedFestivalIdList: Set<Long>, likeCountMap: Map<Long, Int>): FestivalListResponseDTO.FestivalInfoDto {
         val festivalId = festival.id!!
@@ -13,17 +14,13 @@ class FestivalConverter {
             id = festival.id,
             name = festival.name,
             img = festivalImageMap[festivalId],
-            startDate = convertFestivalDate(festival.startDate),
-            endDate = convertFestivalDate(festival.endDate),
+            startDate = festivalDateUtil.removeTime(festival.startDate),
+            endDate = festivalDateUtil.removeTime(festival.endDate),
             address = festival.place,
             isLike = userLikedFestivalIdList.contains(festivalId),
             likeAmount = likeCountMap[festivalId] ?: 0,
         )
     }
 
-    fun convertFestivalDate(date: Date): String {
-        val formatter: SimpleDateFormat = SimpleDateFormat("yyyy.MM.dd")
-        return formatter.format(date)
-    }
 
 }

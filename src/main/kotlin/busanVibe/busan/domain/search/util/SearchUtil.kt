@@ -3,6 +3,7 @@ package busanVibe.busan.domain.search.util
 import busanVibe.busan.domain.common.dto.InfoType
 import busanVibe.busan.domain.festival.domain.Festival
 import busanVibe.busan.domain.festival.domain.FestivalLike
+import busanVibe.busan.domain.festival.util.FestivalDateUtil
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.domain.PlaceLike
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component
 class SearchUtil(
     private val placeRedisUtil: PlaceRedisUtil
 ) {
+
+    private val festivalUtil = FestivalDateUtil()
 
     /**
      * List<Place>와 List<Festival>로 정렬 조건에 맞는 List<SearchResultDTO.InfoDto> 반환
@@ -33,8 +36,8 @@ class SearchUtil(
                 name = festival.name,
                 address = festival.place,
                 isLike = festival.festivalLikes.any { it.user == currentUser },
-                startDate = festival.startDate.toString(),
-                endDate = festival.endDate.toString(),
+                startDate = festivalUtil.removeTime(festival.startDate),
+                endDate = festivalUtil.removeTime(festival.endDate),
                 isEnd = festival.endDate.before(java.util.Date()),
                 likeCount = festivalLikeCount
             )

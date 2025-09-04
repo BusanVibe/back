@@ -10,6 +10,7 @@ import busanVibe.busan.domain.festival.enums.FestivalStatus
 import busanVibe.busan.domain.festival.repository.FestivalImageRepository
 import busanVibe.busan.domain.festival.repository.FestivalLikesRepository
 import busanVibe.busan.domain.festival.repository.FestivalRepository
+import busanVibe.busan.domain.festival.util.FestivalDateUtil
 import busanVibe.busan.domain.user.data.User
 import busanVibe.busan.domain.user.service.login.AuthService
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
@@ -94,6 +95,9 @@ class FestivalQueryService(
         // user 추출
         val currentUser: User = AuthService().getCurrentUser()
 
+        // dateUtil
+        val festivalDateUtil: FestivalDateUtil = FestivalDateUtil()
+
         // 축제 조회
         val festival: Festival? = festivalRepository.findByIdWithLikesAndImages(festivalId)
 
@@ -114,8 +118,8 @@ class FestivalQueryService(
             name = festival.name,
             likeAmount = likeList.size,
             isLike = likeList.any { it.user.id == currentUser.id },
-            startDate = FestivalConverter().convertFestivalDate(festival.startDate),
-            endDate = FestivalConverter().convertFestivalDate(festival.endDate),
+            startDate = festivalDateUtil.removeTime(festival.startDate),
+            endDate = festivalDateUtil.removeTime(festival.endDate),
             address = festival.place,
             fee = festival.fee,
             siteUrl = festival.siteUrl,
