@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.OneToMany
 import lombok.Getter
+import java.time.LocalDate
 import java.util.Date
 
 @Entity
@@ -29,10 +30,10 @@ class Festival (
     val name: String,
 
     @Column(nullable = false)
-    val startDate: Date,
+    val startDate: LocalDate,
 
     @Column(nullable = false)
-    val endDate: Date,
+    val endDate: LocalDate,
 
     @Column(nullable = false, length = 50)
     val place: String,

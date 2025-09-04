@@ -17,7 +17,7 @@ class TourAPIController(
 ) {
 
     @PostMapping("/festivals")
-    @Operation(hidden = true)
+//    @Operation(hidden = true)
     fun saveFestivals(@RequestParam("pageColumns") pageSize: Int, @RequestParam("page") pageNum: Int){
         tourCommandService.syncFestivalsFromApi(pageSize, pageNum)
     }

@@ -11,13 +11,20 @@ import java.util.regex.Pattern
 class TourFestivalConverter {
 
     fun FestivalItem.toEntity(): Festival {
-        val startDate = parseStartDate(USAGE_DAY_WEEK_AND_TIME)
-        val endDate = parseEndDate(USAGE_DAY_WEEK_AND_TIME)
+        var startDate = parseStartDate(USAGE_DAY_WEEK_AND_TIME)
+        var endDate = parseEndDate(USAGE_DAY_WEEK_AND_TIME)
+
+        // 시작일 <-> 종료일 뒤바뀌어있으면 정상으로 바꾸어 저장하도록 수정
+        if(startDate?.isAfter(endDate) == true) {
+            val tmp = startDate
+            startDate = endDate
+            endDate = tmp
+        }
 
         val festival = Festival(
             name = MAIN_TITLE ?: "이름없음",
-            startDate = startDate?: Date(),
-            endDate = endDate?: Date(),
+            startDate = startDate?: LocalDate.now(),
+            endDate = endDate?: LocalDate.now(),
             place = MAIN_PLACE ?: "장소없음",
             introduction = ITEMCNTNTS?.removeTag() ?: "",
             fee = USAGE_AMOUNT?: "정보없음",
@@ -40,16 +47,16 @@ class TourFestivalConverter {
         return festival
     }
 
-    fun parseStartDate(dateStr: String?): Date? {
+    fun parseStartDate(dateStr: String?): LocalDate? {
         if (dateStr.isNullOrBlank()) return null
         val start = tryParseStartEnd(dateStr, true)
-        return start?.let { Date.from(it.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()) }
+        return start?.let { LocalDate.from(it.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()) }
     }
 
-    fun parseEndDate(dateStr: String?): Date? {
+    fun parseEndDate(dateStr: String?): LocalDate? {
         if (dateStr.isNullOrBlank()) return null
         val end = tryParseStartEnd(dateStr, false)
-        return end?.let { Date.from(it.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()) }
+        return end?.let { LocalDate.from(it.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant()) }
     }
 
     // 문자열 속 태그 제거 메서드
