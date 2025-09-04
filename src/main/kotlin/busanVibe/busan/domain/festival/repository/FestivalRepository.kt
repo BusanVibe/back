@@ -45,4 +45,13 @@ interface FestivalRepository: JpaRepository<Festival, Long> {
     )
     fun findLikeFestivals(@Param("user") user: User): List<Festival>
 
+    @Query(
+        """
+            SELECT f FROM Festival f
+            RIGHT JOIN FETCH f.festivalImages fi
+            WHERE fi.imgUrl LIKE 'https://www.visitbusan.net/uploadImgs/files/cntnts%'
+        """
+    )
+    fun findFestivalImageNotNull(): List<Festival>
+
 }

@@ -118,4 +118,14 @@ interface PlaceRepository: JpaRepository<Place, Long> {
     )
     fun findLikePlaceByType(@Param("type") type: PlaceType, @Param("user") user: User): List<Place>
 
+    @Query(
+        """
+            SELECT p FROM Place p
+            RIGHT JOIN FETCH p.placeImages pi
+            WHERE pi.imgUrl LIKE 'http://tong.visitkorea.or.kr/cms/resource%'
+                AND p.type = 'SIGHT'
+        """
+    )
+    fun findPlaceImageNotNull(): List<Place>
+
 }

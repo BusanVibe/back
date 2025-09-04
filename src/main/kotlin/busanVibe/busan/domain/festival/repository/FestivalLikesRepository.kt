@@ -2,12 +2,13 @@ package busanVibe.busan.domain.festival.repository
 
 import busanVibe.busan.domain.festival.domain.Festival
 import busanVibe.busan.domain.festival.domain.FestivalLike
+import busanVibe.busan.domain.festival.domain.FestivalLikeId
 import busanVibe.busan.domain.user.data.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
-interface FestivalLikesRepository: JpaRepository<FestivalLike, String> {
+interface FestivalLikesRepository: JpaRepository<FestivalLike, FestivalLikeId> {
 
     @Query(
         """

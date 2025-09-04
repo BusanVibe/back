@@ -10,7 +10,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.MapsId
 
 @Entity
-open class PlaceLike(
+class PlaceLike(
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
 //    val id: Long?,

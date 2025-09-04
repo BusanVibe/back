@@ -6,7 +6,7 @@ import java.io.Serializable
 
 @Embeddable
 @Getter
-open class FestivalLikeId(
+class FestivalLikeId(
 
     private val userId: Long,
     private val festivalId: Long
