@@ -29,11 +29,11 @@ class Festival (
     @Column(nullable = false, length = 50)
     val name: String,
 
-    @Column(nullable = false)
-    val startDate: LocalDate,
+    @Column(nullable = true)
+    val startDate: LocalDate?,
 
-    @Column(nullable = false)
-    val endDate: LocalDate,
+    @Column(nullable = true)
+    val endDate: LocalDate?,
 
     @Column(nullable = false, length = 50)
     val place: String,
@@ -51,9 +51,9 @@ class Festival (
     val siteUrl: String,
 
     // 연관관계
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    val status: FestivalStatus,
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    val status: FestivalStatus,
 
     @OneToMany(mappedBy = "festival", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     val festivalImages: MutableSet<FestivalImage> = mutableSetOf(),

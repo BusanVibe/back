@@ -11,6 +11,7 @@ import busanVibe.busan.domain.search.dto.SearchResultDTO
 import busanVibe.busan.domain.search.enums.GeneralSortType
 import busanVibe.busan.domain.user.data.User
 import org.springframework.stereotype.Component
+import java.time.LocalDate
 
 @Component
 class SearchUtil(
@@ -38,7 +39,7 @@ class SearchUtil(
                 isLike = festival.festivalLikes.any { it.user == currentUser },
                 startDate = festivalUtil.removeTime(festival.startDate),
                 endDate = festivalUtil.removeTime(festival.endDate),
-                isEnd = festival.endDate.before(java.util.Date()),
+                isEnd = festival.endDate?.isBefore(LocalDate.now()),
                 likeCount = festivalLikeCount
             )
         }

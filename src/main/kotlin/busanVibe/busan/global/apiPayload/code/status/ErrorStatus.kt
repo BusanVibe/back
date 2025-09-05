@@ -33,6 +33,7 @@ enum class ErrorStatus(
     // 축제 관련 에러
     FESTIVAL_NOT_FOUND(HttpStatus.NOT_FOUND, "FESTIVAL4004", "축제를 찾을 수 없습니다."),
     FESTIVAL_ID_REQUIRED(HttpStatus.BAD_REQUEST, "FESTIVAL4005", "festivalId가 필요합니다."),
+    FESTIVAL_DURATION_INVALID(HttpStatus.INTERNAL_SERVER_ERROR, "FESTIVAL4006", "축제 기간 정보가 올바르지 않습니다."),
 
     // 검색 관련 에러
     SEARCH_INVALID_CONDITION(HttpStatus.BAD_REQUEST, "SEARCH4002", "잘못된 검색 조건입니다."),

@@ -18,6 +18,8 @@ import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.xml.sax.ErrorHandler
+import java.time.LocalDate
 
 @Service
 class FestivalQueryService(
@@ -43,10 +45,25 @@ class FestivalQueryService(
 
 
         // 축제 리스트 조회
-        val festivalList: List<Festival> = when(status){
-            FestivalStatus.ALL -> festivalRepository.findAll()
-            else -> festivalRepository.getFestivalList(status)
+        val festivals = festivalRepository.findAll()
+        val today = LocalDate.now()
+        val festivalList = festivals.filter { festival ->
+            val start = festival.startDate
+            val end = festival.endDate
+
+            when (status) {
+                FestivalStatus.ALL -> true
+                FestivalStatus.UPCOMING -> start != null && today.isBefore(start)
+                FestivalStatus.IN_PROGRESS -> start != null && end != null &&
+                        (today.isEqual(start) || today.isEqual(end) || (today.isAfter(start) && today.isBefore(end)))
+                FestivalStatus.COMPLETE -> end != null && today.isAfter(end)
+            }
         }
+
+//        val festivalList: List<Festival> = when(status){
+//            FestivalStatus.ALL -> festivalRepository.findAll()
+//            else -> festivalRepository.getFestivalList(status)
+//        }
 
 //        val festivalIdList: List<Long> = festivalList.mapNotNull { it.id }
 
