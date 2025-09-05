@@ -23,7 +23,7 @@ class TourAPIController(
     }
 
     @PostMapping("/place")
-//    @Operation(hidden = true)
+    @Operation(hidden = true)
     fun savePlace(@RequestParam("place-type") placeType: PlaceType, @RequestParam("pageColumns") pageSize: Int, @RequestParam("page") pageNum: Int ){
         tourCommandService.getPlace(placeType, pageSize, pageNum)
     }

@@ -19,7 +19,7 @@ data class PlaceImageHeader(
 )
 
 data class PlaceImageBody(
-    val items: PlaceImageItems,
+    val items: PlaceImageItems?,
     val numOfRows: Int,
     val pageNo: Int,
     val totalCount: Int

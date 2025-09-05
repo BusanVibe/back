@@ -65,7 +65,7 @@ class TourCommandService(
             val place = Place(
                 contentId = apiItem.contentId,
                 name = apiItem.title.orNoInfo().removeTag(),
-                type = placeType,
+                type = PlaceType.fromTourApiTypeId(apiItem.contentTypeId),
                 latitude = apiItem.mapY?.toBigDecimal()?.setScale(4, RoundingMode.HALF_UP),
                 longitude = apiItem.mapX?.toBigDecimal()?.setScale(4, RoundingMode.HALF_UP),
                 address = apiItem.addr1.orNoInfo().removeTag(),
@@ -157,3 +157,4 @@ class TourCommandService(
     }
 
 }
+

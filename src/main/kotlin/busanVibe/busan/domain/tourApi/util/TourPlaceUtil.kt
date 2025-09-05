@@ -40,6 +40,8 @@ class TourPlaceUtil(
     // json 변환 위한 objectMapper
     val objectMapper = jacksonObjectMapper()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+        .configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true)
+
 
     fun getPlace(placeType: PlaceType, pageSize: Int, pageNum: Int): PlaceApiResponseWrapper {
         val placeTypeCode = placeType.tourApiTypeId

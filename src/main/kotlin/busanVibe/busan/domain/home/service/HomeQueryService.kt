@@ -97,7 +97,7 @@ class HomeQueryService(
         val currentUser = AuthService().getCurrentUser()
         val places = placeRepository.findAllWithFetch()
 
-        return places.take(5).map { place ->
+        return places.shuffled().take(5).map { place ->
 
             val congestion = placeRedisUtil.getRedisCongestion(place.id)
 

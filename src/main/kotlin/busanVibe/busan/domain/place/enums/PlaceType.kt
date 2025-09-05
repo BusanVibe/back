@@ -19,8 +19,8 @@ enum class PlaceType(
     ;
 
     companion object{
-        fun fromTourApiTypeId(code: String): PlaceType? {
-            return values().find { it.tourApiTypeId == code }
+        fun fromTourApiTypeId(code: String?): PlaceType {
+            return values().find { it.tourApiTypeId == code } ?: SIGHT
         }
     }
 

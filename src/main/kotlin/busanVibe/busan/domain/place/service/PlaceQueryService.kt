@@ -11,7 +11,6 @@ import busanVibe.busan.domain.place.repository.PlaceImageRepository
 import busanVibe.busan.domain.place.repository.PlaceLikeRepository
 import busanVibe.busan.domain.place.repository.PlaceRepository
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
-import busanVibe.busan.domain.place.util.checkImageUrl
 import busanVibe.busan.domain.place.util.nullIfBlank
 import busanVibe.busan.domain.user.data.User
 import busanVibe.busan.domain.user.service.login.AuthService
