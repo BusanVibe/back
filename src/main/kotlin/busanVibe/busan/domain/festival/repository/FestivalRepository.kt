@@ -9,12 +9,6 @@ import org.springframework.data.repository.query.Param
 
 interface FestivalRepository: JpaRepository<Festival, Long> {
 
-    @Query(
-"""
-        SELECT f FROM Festival f
-        WHERE f.status = :status 
-        """)
-    fun getFestivalList(@Param("status") status: FestivalStatus): List<Festival>
 
     @Query("""
         SELECT f FROM Festival f

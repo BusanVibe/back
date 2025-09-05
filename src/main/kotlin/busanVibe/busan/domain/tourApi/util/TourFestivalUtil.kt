@@ -15,10 +15,10 @@ class TourFestivalUtil {
     @Value("\${tourAPI.key}")
     lateinit var tourApiKey: String
 
-    fun getFestivals(): List<FestivalItem> {
+    fun getFestivals(pageSize: Int, pageNum: Int): List<FestivalItem> {
 
-        val pageNum = "1"
-        val pageSize = "100"
+        val pageNum = pageNum
+        val pageSize = pageSize
 
         val urlBuilder = StringBuilder("http://apis.data.go.kr/6260000/FestivalService/getFestivalKr")
         urlBuilder.append("?ServiceKey=")

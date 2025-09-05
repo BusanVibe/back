@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
+import java.math.RoundingMode
 import kotlin.random.Random
 
 @Service
@@ -30,16 +31,18 @@ class TourCommandService(
     private val noInfo: String = "정보 없음"
     private val log: Logger = LoggerFactory.getLogger(TourCommandService::class.java)
 
-    fun syncFestivalsFromApi() {
+    fun syncFestivalsFromApi(pageSize: Int, pageNum: Int) {
         val converter = TourFestivalConverter()
-        val festivals = tourFestivalUtil.getFestivals().map { converter.run { it.toEntity() } }
+        val festivals = tourFestivalUtil.getFestivals(pageSize, pageNum)
+            .map { converter.run { it.toEntity() } }
+            .filter { it.startDate != null && it.endDate != null } // 시작일 혹은 종료일 정보 없을 시 해당 정보 저장X
         festivalRepository.saveAll(festivals)
     }
 
 
 //    @Transactional
-    fun getPlace(placeType: PlaceType) {
-        val apiResponse = tourPlaceUtil.getPlace(placeType).response
+    fun getPlace(placeType: PlaceType, pageSize: Int, pageNum: Int) {
+        val apiResponse = tourPlaceUtil.getPlace(placeType, pageSize, pageNum).response
         val items = apiResponse.body?.items?.item
 
         val placeList : MutableList<Place> = mutableListOf<Place>()
@@ -51,16 +54,20 @@ class TourCommandService(
                 apiItem.contentId,
                 apiItem.contentTypeId.toString()
             ).response
+            val placeImageResponse = tourPlaceUtil.getImages(apiItem.contentId)
 
             val detailItem = detailResponse.body?.items?.item?.firstOrNull()
             val introItem = introResponse.body?.items?.item?.firstOrNull()
+            val placeImages = placeImageResponse.response.body?.items?.item
+                ?.mapNotNull { it.originImgUrl }
+                ?.toList() ?: emptyList()
 
             val place = Place(
                 contentId = apiItem.contentId,
                 name = apiItem.title.orNoInfo().removeTag(),
                 type = placeType,
-                latitude = apiItem.mapY?.toBigDecimal(),
-                longitude = apiItem.mapX?.toBigDecimal(),
+                latitude = apiItem.mapY?.toBigDecimal()?.setScale(4, RoundingMode.HALF_UP),
+                longitude = apiItem.mapX?.toBigDecimal()?.setScale(4, RoundingMode.HALF_UP),
                 address = apiItem.addr1.orNoInfo().removeTag(),
                 introduction = detailItem?.overview.orNoInfo().removeTag(),
                 phone = listOf(apiItem.tel, detailItem?.tel, getCenter(placeType, introItem))
@@ -74,9 +81,9 @@ class TourCommandService(
             )
 
 
-            // 이미지 추가 (firstimage, firstimage2 등 있을 수 있음)
-            apiItem.firstImage?.let { place.addImage(it) }
-            apiItem.firstImage2?.let { place.addImage(it) }
+            // 이미지 추가
+            apiItem.firstImage?.let { place.addImage(it) } // 소개 정보 조회에서 가져온 이미지
+            placeImages.forEach { place.addImage(it) } // 이미지 정보 조회에서 가져온 이미지
 
 //             저장 (중복 방지)
 //            if (!placeRepository.existsByContentId(apiItem.contentId)) {

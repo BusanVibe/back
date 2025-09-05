@@ -91,6 +91,7 @@ class PlaceCongestionQueryService(
         val placeImageSet: Set<PlaceImage> = place.placeImages
         val placeImageList = placeImageSet.toList()
             .sortedBy { it.createdAt }
+            .filter { it.imgUrl.isNotBlank() }
             .map { it.imgUrl }
 
 
@@ -117,8 +118,6 @@ class PlaceCongestionQueryService(
         // 최근 6개 3시간 단위 시간 생성 (기준시간 포함 총 7개)
         val hours = (6 downTo 0).map { i -> (roundedBase - i * 3 + 24) % 24 }
 
-        log.info("배열 담기 시작")
-
         val byTimePercent: List<Float> = hours.map { hour ->
             val adjustedDateTime = current.withHour(hour)
                 .withMinute(0).withSecond(0).withNano(0)
@@ -127,8 +126,6 @@ class PlaceCongestionQueryService(
                 }
             placeRedisUtil.getTimeCongestion(placeId, adjustedDateTime)
         }
-
-        log.info("배열 담기 끝")
 
         return PlaceMapResponseDTO.PlaceCongestionDto(
             standardTime = roundedBase,

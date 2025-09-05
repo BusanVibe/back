@@ -11,6 +11,8 @@ import busanVibe.busan.domain.place.repository.PlaceImageRepository
 import busanVibe.busan.domain.place.repository.PlaceLikeRepository
 import busanVibe.busan.domain.place.repository.PlaceRepository
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
+import busanVibe.busan.domain.place.util.checkImageUrl
+import busanVibe.busan.domain.place.util.nullIfBlank
 import busanVibe.busan.domain.user.data.User
 import busanVibe.busan.domain.user.service.login.AuthService
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
@@ -24,7 +26,7 @@ import kotlin.String
 @Service
 class PlaceQueryService(
     private val placeRepository: PlaceRepository,
-    private val placeLikeRepository: PlaceLikeRepository,
+        private val placeLikeRepository: PlaceLikeRepository,
     private val placeImageRepository: PlaceImageRepository,
     private val redisTemplate: StringRedisTemplate,
 ) {
@@ -70,6 +72,7 @@ class PlaceQueryService(
         val placeRedisUtil = PlaceRedisUtil(redisTemplate)
         val congestionMap: Map<Long, Int> = placeIdList.associateWith { placeRedisUtil.getRedisCongestion(it) }
 
+
         // DTO 변환
         val dtoList: List<PlaceResponseDTO.PlaceListInfoDto> = placeList.map { place ->
             val placeId = place.id!!
@@ -81,7 +84,7 @@ class PlaceQueryService(
                 likeAmount = likeCountMap[placeId] ?: 0,       // 전체 사용자 기준
                 type = place.type.capitalEnglish,
                 address = place.address,
-                img = placeImages[placeId]
+                img = placeImages[placeId].nullIfBlank()
             )
         }
 

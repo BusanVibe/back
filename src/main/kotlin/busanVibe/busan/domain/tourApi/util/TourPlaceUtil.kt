@@ -3,6 +3,7 @@ package busanVibe.busan.domain.tourApi.util
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.tourApi.dto.PlaceApiResponseWrapper
 import busanVibe.busan.domain.tourApi.dto.PlaceCommonApiWrapper
+import busanVibe.busan.domain.tourApi.dto.PlaceImageResponseWrapper
 import busanVibe.busan.domain.tourApi.dto.PlaceIntroductionResponseWrapper
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -28,8 +29,6 @@ class TourPlaceUtil(
     // TOUR API 요청 파라미터
     private val mobileOs:String = "AND"
     private val mobileApp: String = "busanvibe"
-    private val numOfRows: String = "10"
-    private val pageNum: String = "0"
 
     // webclient 응답 버퍼 증가
     private val strategies = org.springframework.web.reactive.function.client.ExchangeStrategies.builder()
@@ -42,11 +41,11 @@ class TourPlaceUtil(
     val objectMapper = jacksonObjectMapper()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
 
-    fun getPlace(placeType: PlaceType): PlaceApiResponseWrapper {
+    fun getPlace(placeType: PlaceType, pageSize: Int, pageNum: Int): PlaceApiResponseWrapper {
         val placeTypeCode = placeType.tourApiTypeId
 
         val url = StringBuilder("https://apis.data.go.kr/B551011/KorService2/areaBasedList2")
-            .append("?numOfRows=").append(numOfRows)
+            .append("?numOfRows=").append(pageSize)
             .append("&pageNo=").append(pageNum)
             .append("&MobileOS=").append(mobileOs)
             .append("&MobileApp=").append(mobileApp)
@@ -87,6 +86,19 @@ class TourPlaceUtil(
 
         val json = makeJson(url) ?: throw RuntimeException("JSON response is null")
         return objectMapper.readValue(json, PlaceIntroductionResponseWrapper::class.java)
+    }
+
+    fun getImages(contentId: Long): PlaceImageResponseWrapper{
+        val url = StringBuilder("https://apis.data.go.kr/B551011/KorService2/detailImage2")
+            .append("?MobileOS=").append(mobileOs)
+            .append("&MobileApp=").append(mobileApp)
+            .append("&contentId=").append(contentId)
+            .append("&_type=json")
+            .append("&serviceKey=").append(tourApiKey)
+            .toString()
+
+        val json = makeJson(url) ?: throw RuntimeException("JSON response is null")
+        return objectMapper.readValue(json, PlaceImageResponseWrapper::class.java)
     }
 
     private fun makeJson(url: String): String? {

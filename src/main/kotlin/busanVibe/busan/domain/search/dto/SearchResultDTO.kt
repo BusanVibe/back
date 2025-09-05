@@ -31,7 +31,8 @@ class SearchResultDTO {
         val endDate: String? = null,
         @get:JsonProperty("is_end")
         val isEnd: Boolean?,
-        val likeCount: Int = 0
+        val likeCount: Int = 0,
+        val imgUrl: String?
     )
 
 }
