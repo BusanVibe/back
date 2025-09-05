@@ -54,9 +54,13 @@ class TourCommandService(
                 apiItem.contentId,
                 apiItem.contentTypeId.toString()
             ).response
+            val placeImageResponse = tourPlaceUtil.getImages(apiItem.contentId)
 
             val detailItem = detailResponse.body?.items?.item?.firstOrNull()
             val introItem = introResponse.body?.items?.item?.firstOrNull()
+            val placeImages = placeImageResponse.response.body?.items?.item
+                ?.mapNotNull { it.originImgUrl }
+                ?.toList() ?: emptyList()
 
             val place = Place(
                 contentId = apiItem.contentId,
@@ -77,9 +81,9 @@ class TourCommandService(
             )
 
 
-            // 이미지 추가 (firstimage, firstimage2 등 있을 수 있음)
-            apiItem.firstImage?.let { place.addImage(it) }
-            apiItem.firstImage2?.let { place.addImage(it) }
+            // 이미지 추가
+            apiItem.firstImage?.let { place.addImage(it) } // 소개 정보 조회에서 가져온 이미지
+            placeImages.forEach { place.addImage(it) } // 이미지 정보 조회에서 가져온 이미지
 
 //             저장 (중복 방지)
 //            if (!placeRepository.existsByContentId(apiItem.contentId)) {

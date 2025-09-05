@@ -3,6 +3,7 @@ package busanVibe.busan.domain.tourApi.util
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.tourApi.dto.PlaceApiResponseWrapper
 import busanVibe.busan.domain.tourApi.dto.PlaceCommonApiWrapper
+import busanVibe.busan.domain.tourApi.dto.PlaceImageResponseWrapper
 import busanVibe.busan.domain.tourApi.dto.PlaceIntroductionResponseWrapper
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -85,6 +86,19 @@ class TourPlaceUtil(
 
         val json = makeJson(url) ?: throw RuntimeException("JSON response is null")
         return objectMapper.readValue(json, PlaceIntroductionResponseWrapper::class.java)
+    }
+
+    fun getImages(contentId: Long): PlaceImageResponseWrapper{
+        val url = StringBuilder("https://apis.data.go.kr/B551011/KorService2/detailImage2")
+            .append("?MobileOS=").append(mobileOs)
+            .append("&MobileApp=").append(mobileApp)
+            .append("&contentId=").append(contentId)
+            .append("&_type=json")
+            .append("&serviceKey=").append(tourApiKey)
+            .toString()
+
+        val json = makeJson(url) ?: throw RuntimeException("JSON response is null")
+        return objectMapper.readValue(json, PlaceImageResponseWrapper::class.java)
     }
 
     private fun makeJson(url: String): String? {
