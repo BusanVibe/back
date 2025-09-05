@@ -32,10 +32,10 @@ class Place(
     @Enumerated(EnumType.STRING)
     val type: PlaceType,
 
-    @Column(nullable = false, scale = 5)
+    @Column(nullable = false, precision = 38, scale = 5)
     val latitude: BigDecimal? = null,
 
-    @Column(nullable = false, scale = 5)
+    @Column(nullable = false, precision = 38, scale = 5)
     val longitude: BigDecimal? = null,
 
     @Column(nullable = false, length = 50)
