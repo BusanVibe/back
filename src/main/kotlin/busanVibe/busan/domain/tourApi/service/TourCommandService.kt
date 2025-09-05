@@ -33,7 +33,9 @@ class TourCommandService(
 
     fun syncFestivalsFromApi(pageSize: Int, pageNum: Int) {
         val converter = TourFestivalConverter()
-        val festivals = tourFestivalUtil.getFestivals(pageSize, pageNum).map { converter.run { it.toEntity() } }
+        val festivals = tourFestivalUtil.getFestivals(pageSize, pageNum)
+            .map { converter.run { it.toEntity() } }
+            .filter { it.startDate != null && it.endDate != null } // 시작일 혹은 종료일 정보 없을 시 해당 정보 저장X
         festivalRepository.saveAll(festivals)
     }
 
