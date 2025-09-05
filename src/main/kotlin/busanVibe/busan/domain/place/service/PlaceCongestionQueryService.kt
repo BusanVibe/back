@@ -91,6 +91,7 @@ class PlaceCongestionQueryService(
         val placeImageSet: Set<PlaceImage> = place.placeImages
         val placeImageList = placeImageSet.toList()
             .sortedBy { it.createdAt }
+            .filter { it.imgUrl.isNotBlank() }
             .map { it.imgUrl }
 
 

@@ -7,6 +7,7 @@ import busanVibe.busan.domain.home.dto.HomeResponseDTO
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.repository.PlaceRepository
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
+import busanVibe.busan.domain.place.util.nullIfBlank
 import busanVibe.busan.domain.user.service.login.AuthService
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
@@ -83,7 +84,7 @@ class HomeQueryService(
                 latitude = place.latitude?.toDouble(),
                 longitude = place.longitude?.toDouble(),
                 type = place.type.korean,
-                image = place.placeImages.firstOrNull()?.imgUrl,
+                image = place.placeImages.firstOrNull()?.imgUrl.nullIfBlank(),
                 congestionLevel = congestion,
                 address = place.address
             )
@@ -105,7 +106,7 @@ class HomeQueryService(
                 name = place.name,
                 congestionLevel = congestion,
                 type = place.type.korean,
-                image = place.placeImages.firstOrNull()?.imgUrl,
+                image = place.placeImages.firstOrNull()?.imgUrl.nullIfBlank(),
                 latitude = place.latitude?.toDouble(),
                 longitude = place.longitude?.toDouble(),
                 address = place.address,

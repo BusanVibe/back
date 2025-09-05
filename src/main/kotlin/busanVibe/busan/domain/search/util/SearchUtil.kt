@@ -7,6 +7,7 @@ import busanVibe.busan.domain.festival.util.FestivalDateUtil
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.domain.PlaceLike
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
+import busanVibe.busan.domain.place.util.nullIfBlank
 import busanVibe.busan.domain.search.dto.SearchResultDTO
 import busanVibe.busan.domain.search.enums.GeneralSortType
 import busanVibe.busan.domain.user.data.User
@@ -64,7 +65,7 @@ class SearchUtil(
                 endDate = null,
                 isEnd = null,
                 likeCount = placeLikeCount,
-                imgUrl = place.placeImages.first().imgUrl.trim().takeIf { it.isNotBlank() }
+                imgUrl = place.placeImages.first().imgUrl.nullIfBlank()
             )
         }
 
