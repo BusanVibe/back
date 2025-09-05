@@ -2,6 +2,7 @@ package busanVibe.busan.domain.place.domain
 
 import busanVibe.busan.domain.common.BaseEntity
 import busanVibe.busan.domain.place.enums.PlaceType
+import busanVibe.busan.domain.place.util.checkImageUrl
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -66,8 +67,10 @@ class Place(
 ) : BaseEntity(){
 
     fun addImage(imgUrl: String) {
-        val image = PlaceImage(imgUrl = imgUrl, place = this)
-        placeImages.add(image)
+        if(checkImageUrl(imgUrl)) {
+            val image = PlaceImage(imgUrl = imgUrl, place = this)
+            placeImages.add(image)
+        }
     }
 
     fun removeImage(image: PlaceImage) {
