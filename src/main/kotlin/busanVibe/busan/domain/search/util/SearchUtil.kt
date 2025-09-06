@@ -42,7 +42,7 @@ class SearchUtil(
                 endDate = festivalUtil.removeTime(festival.endDate),
                 isEnd = festival.endDate?.isBefore(LocalDate.now()),
                 likeCount = festivalLikeCount,
-                imgUrl = festival.festivalImages.first().imgUrl
+                imgUrl = festival.festivalImages.firstOrNull()?.imgUrl
             )
         }
 
@@ -65,7 +65,7 @@ class SearchUtil(
                 endDate = null,
                 isEnd = null,
                 likeCount = placeLikeCount,
-                imgUrl = place.placeImages.first().imgUrl.nullIfBlank()
+                imgUrl = place.placeImages.firstOrNull()?.imgUrl
             )
         }
 
