@@ -31,14 +31,19 @@ class ApiRequestLogAspect {
         val request = (RequestContextHolder.currentRequestAttributes() as ServletRequestAttributes).request
         val uri = request.requestURI
         val httpMethod = request.method
-        val currentUser = AuthService().getCurrentUser()
+        val currentUser = runCatching { AuthService().getCurrentUser() }.getOrNull()
+
+        // swagger, actuator 등 제외
+        if (uri.startsWith("/swagger") || uri.startsWith("/v3/api-docs") || uri.startsWith("/actuator")) {
+            return jp.proceed()
+        }
 
         // 컨트롤러 정보
         val methodName = jp.signature.name
         val args = jp.args.joinToString()
 
         // 시작 로그
-        log.info("API 호출: 유저[${currentUser.id}] - 요청 정보 [${httpMethod}: ${uri} ] - [ ${methodName}(${args}) ]")
+        log.info("API 호출: 유저[${currentUser?.id}] - 요청 정보 [${httpMethod}: ${uri} ] - [ ${methodName}(${args}) ]")
 
 
         // 이거 기준으로 위에는 before
@@ -49,7 +54,7 @@ class ApiRequestLogAspect {
         val end = System.currentTimeMillis()
 
         // 종료 로그
-        log.info("API 호출종료: 유저[${currentUser.id}] - 요청 정보 [${httpMethod}: ${uri} ] - 실행시간[${end-start}ms]")
+        log.info("API 호출종료: 유저[${currentUser?.id}] - 요청 정보 [${httpMethod}: ${uri} ] - 실행시간[${end-start}ms]")
 
         return obj
     }
