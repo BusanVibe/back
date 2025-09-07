@@ -1,5 +1,6 @@
 package busanVibe.busan.domain.chat.dto.websocket
 
+import busanVibe.busan.domain.chat.enums.MessageType
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
@@ -20,7 +21,8 @@ class ChatMessageResponseDTO {
         val content: String,
         val dateTime: LocalDateTime?,
         @get:JsonProperty("is_my")
-        val isMy: Boolean
+        val isMy: Boolean,
+        val type: MessageType
     )
 
 }
