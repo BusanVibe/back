@@ -170,7 +170,8 @@ class ChatMongoService(
                 userImage = user?.profileImageUrl,
                 dateTime = chat.time,
                 content = chat.message,
-                isMy = user?.id == currentUser.id
+                isMy = user?.id == currentUser.id,
+                type = chat.type
             )
         }
 
