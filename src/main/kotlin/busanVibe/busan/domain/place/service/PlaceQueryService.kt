@@ -69,7 +69,7 @@ class PlaceQueryService(
 
         // 혼잡도 조회
         val placeRedisUtil = PlaceRedisUtil(redisTemplate)
-        val congestionMap: Map<Long, Int> = placeIdList.associateWith { placeRedisUtil.getRedisCongestion(it) }
+        val congestionMap: Map<Long, Int> = placeIdList.associateWith { placeRedisUtil.getTimeCongestion(it).toInt() }
 
 
         // DTO 변환
