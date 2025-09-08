@@ -59,7 +59,7 @@ class SearchUtil(
                 latitude = place.latitude?.toDouble(),
                 longitude = place.longitude?.toDouble(),
                 address = place.address,
-                congestionLevel = placeRedisUtil.getRedisCongestion(place.id),
+                congestionLevel = placeRedisUtil.getTimeCongestion(place.id).toInt(),
                 isLike = place.placeLikes.any { it.user == currentUser },
                 startDate = null,
                 endDate = null,

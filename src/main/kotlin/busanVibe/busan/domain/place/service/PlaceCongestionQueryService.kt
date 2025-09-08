@@ -68,7 +68,7 @@ class PlaceCongestionQueryService(
                 type = it.type.capitalEnglish,
                 latitude = it.latitude,
                 longitude = it.longitude,
-                congestionLevel = placeRedisUtil.getRedisCongestion(it.id)
+                congestionLevel = placeRedisUtil.getTimeCongestion(it.id).toInt()
             )
         }
 
@@ -98,7 +98,7 @@ class PlaceCongestionQueryService(
         return PlaceMapResponseDTO.PlaceDefaultInfoDto(
             id = place.id,
             name = place.name,
-            congestionLevel = placeRedisUtil.getRedisCongestion(place.id),
+            congestionLevel = placeRedisUtil.getTimeCongestion(place.id).toInt(),
             latitude = place.latitude,
             longitude = place.longitude,
             address = place.address,

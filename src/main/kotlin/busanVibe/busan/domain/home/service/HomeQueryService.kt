@@ -67,7 +67,7 @@ class HomeQueryService(
 
         val places = placeRepository.findAllWithImages()
         val placesWithCongestion = places.mapNotNull { place ->
-            val congestion = placeRedisUtil.getRedisCongestion(place.id)
+            val congestion = placeRedisUtil.getTimeCongestion(place.id)
             if (congestion != null) {
                 place to congestion
             } else {
@@ -85,7 +85,7 @@ class HomeQueryService(
                 longitude = place.longitude?.toDouble(),
                 type = place.type.korean,
                 image = place.placeImages.firstOrNull()?.imgUrl.nullIfBlank(),
-                congestionLevel = congestion,
+                congestionLevel = congestion.toInt(),
                 address = place.address
             )
         }
@@ -99,12 +99,12 @@ class HomeQueryService(
 
         return places.shuffled().take(5).map { place ->
 
-            val congestion = placeRedisUtil.getRedisCongestion(place.id)
+            val congestion = placeRedisUtil.getTimeCongestion(place.id)
 
             HomeResponseDTO.RecommendPlace(
                 id = place.id,
                 name = place.name,
-                congestionLevel = congestion,
+                congestionLevel = congestion.toInt(),
                 type = place.type.korean,
                 image = place.placeImages.firstOrNull()?.imgUrl.nullIfBlank(),
                 latitude = place.latitude?.toDouble(),

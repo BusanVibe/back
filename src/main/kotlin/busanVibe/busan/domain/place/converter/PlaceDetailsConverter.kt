@@ -28,7 +28,7 @@ class PlaceDetailsConverter(
         name = place.name,
         type = place.type.capitalEnglish,
         img = placeImages.map { it.imgUrl },
-        congestionLevel = redisUtil.getRedisCongestion(place.id),
+        congestionLevel = redisUtil.getTimeCongestion(place.id).toInt(),
         likeAmount = placeLikes.size,
         address = place.address,
         isLike = isLike,
