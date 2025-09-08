@@ -116,7 +116,7 @@ class PlaceCongestionQueryService(
         val roundedBase = (current.hour / 3) * 3
 
         // 최근 6개 3시간 단위 시간 생성 (기준시간 포함 총 7개)
-        val hours = (6 downTo 0).map { i -> (roundedBase - i * 3 + 24) % 24 }
+        val hours = (-3 .. 3).map { i -> (roundedBase - i * 3 + 24) % 24 }
 
         val byTimePercent: List<Float> = hours.map { hour ->
             val adjustedDateTime = current.withHour(hour)
