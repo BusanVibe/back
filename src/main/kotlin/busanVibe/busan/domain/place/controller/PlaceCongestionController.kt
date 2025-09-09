@@ -50,8 +50,23 @@ class PlaceCongestionController (
         return ApiResponse.onSuccess(place)
     }
 
-    @GetMapping("/place/{placeId}/real-time")
-    @Operation(summary = "명소 실시간 혼잡도 조회")
+    @GetMapping("/place/{placeId}/congestions")
+    @Operation(summary = "명소 혼잡도 조회",
+        description =
+            """
+                * congestions_by_day : 각 요일별 현재시간 기준 혼잡도
+                  - index [ 0:월, 1:화 ... 5:토, 6:일 ]
+                  
+                * congestions_by_time : 각 요일별 시간별 혼잡도 ( 0~23시 제공 )
+                  - 명소의 모든 요일의 혼잡도 제공
+                  - 총 7개의 배열, 각 배열에는 24개의 혼잡도 정보 담김
+                  
+                * standard_day와 standard_time 활용해서 현재시간 판단 가능합니다.
+                  이거도 마찬가지로 0:월 ~ 6:일
+                  
+                * 현재(실시간) 혼잡도는 real_time_congestion_level 이용하면 됩니다.
+            """
+    )
     fun placeRealTimeCongestion(
         @PathVariable("placeId") placeId: Long): ApiResponse<PlaceMapResponseDTO.PlaceCongestionDto>{
         val congestion = placeCongestionQueryService.getCongestion(placeId)

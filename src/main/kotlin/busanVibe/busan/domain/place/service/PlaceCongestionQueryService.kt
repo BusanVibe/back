@@ -119,28 +119,36 @@ class PlaceCongestionQueryService(
     @Transactional(readOnly = true)
     fun getCongestion(placeId: Long): PlaceMapResponseDTO.PlaceCongestionDto {
 
-        val current = LocalDateTime.now()
-        log.info("현재 시간: ${current}시")
+        // 현재시간 기준 LocalDateTime
+        val currentDateTime = LocalDateTime.now()
 
-        val roundedBase = (current.hour / 3) * 3
+        // 혼잡도 리스트
+        val congestionsByDay: MutableList<Float> = mutableListOf() // 요일별
+        val congestionsByTime: MutableList<List<Float>> = mutableListOf() // 시간대별
 
-        // 최근 6개 3시간 단위 시간 생성 (기준시간 포함 총 7개)
-        val hours = (-3 .. 3).map { i -> (roundedBase - i * 3 + 24) % 24 }
-
-        val byTimePercent: List<Float> = hours.map { hour ->
-            val adjustedDateTime = current.withHour(hour)
-                .withMinute(0).withSecond(0).withNano(0)
-                .let {
-                    if (hour > current.hour) it.minusDays(1) else it
-                }
-            placeRedisUtil.getTimeCongestion(placeId, adjustedDateTime)
+        // 시간대별 혼잡도 ( 월~일, 0~23시 )
+        for( day in 1..7){
+            val congestions = mutableListOf<Float>() // 각 요일의 혼잡도 정보 담을 List
+            for( hour in 0..23){
+                congestions.add(placeRedisUtil.getTimeCongestion(placeId, day, hour))
+            }
+            congestionsByTime.add(congestions)
         }
 
+        // 요일별 현재 시간의 혼잡도
+        for( day in 1..7){
+            congestionsByDay.add(placeRedisUtil.getTimeCongestion(placeId, day, currentDateTime.hour))
+        }
+
+        // DTO 생성 및 반환
         return PlaceMapResponseDTO.PlaceCongestionDto(
-            standardTime = roundedBase,
-            realTimeCongestionLevel = placeRedisUtil.getTimeCongestion(placeId, current).toInt(),
-            byTimePercent = byTimePercent
+            standardDay = currentDateTime.dayOfWeek.value-1, // 원래 1:월~7:일인데, 0:월~6일로 변경해서 반환
+            standardTime = currentDateTime.hour, // 0~23
+            realTimeCongestionLevel = placeRedisUtil.getTimeCongestion(placeId).toInt(),
+            congestionsByDay = congestionsByDay,
+            congestionsByTime = congestionsByTime
         )
+
     }
 
     @Transactional(readOnly = false)
