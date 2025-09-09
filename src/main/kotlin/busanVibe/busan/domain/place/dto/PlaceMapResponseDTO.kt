@@ -33,7 +33,8 @@ class PlaceMapResponseDTO {
         val address: String,
         @get:JsonProperty("is_open")
         val isOpen: Boolean,
-        val imgList: List<String>
+        val imgList: List<String>,
+        val isLike: Boolean
     )
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
