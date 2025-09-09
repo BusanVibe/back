@@ -13,46 +13,55 @@ class PlaceRedisUtil(
 
     private val log = LoggerFactory.getLogger("busanVibe.busan.domain.place")
 
-    // 임의로 혼잡도 생성하여 반환. 레디스 키 값으로 저장함.
-//    fun getRedisCongestion(placeId: Long?): Int{
-//
-//        val key = "place:congestion:$placeId"
-//        val randomCongestion = getRandomCongestion().toInt().toString()
-//
-//        redisTemplate.opsForValue()
-//            .set(key, randomCongestion)
-//
-//        return Integer.parseInt(randomCongestion)
-//    }
-
-    // 지정 시간 혼잡도 조회
-    // null이면 현재시간 기준
-    fun getTimeCongestion(placeId: Long?, dateTime: LocalDateTime?): Float {
-
-        val dateTime = dateTime ?: LocalDateTime.now()
-
-        val roundedHour = (dateTime.hour / 3) * 3
-        val key = "place:congestion:$placeId-${dateTime.year}-${dateTime.monthValue}-${dateTime.dayOfMonth}-$roundedHour"
-
-        val value = redisTemplate.opsForValue().get(key)
-
-        return (if (value != null) {
-            value.toFloatOrNull() ?: 0
-        } else {
-            setPlaceTimeCongestion(placeId, dateTime.withHour(roundedHour))
-            val newValue = redisTemplate.opsForValue().get(key)
-            newValue?.toFloatOrNull() ?: 0
-        }) as Float
-    }
-
+    // 현재 시간 기준 혼잡도 구하는 메서드
+    // 현재에 해당하는 요일과 시간의 혼잡도 반환
     fun getTimeCongestion(placeId: Long?):Float{
         return getTimeCongestion(placeId, LocalDateTime.now())
     }
 
+    /**
+    * [요일(1=Mon..7=Sun), 시간]으로 혼잡도 구하는 메서드
+    * @param placeId 조회 대상 장소 ID
+    * @param dayOfWeek 1..7 (1=월요일, 7=일요일)
+    * @param hour 0..23
+    */
+    fun getTimeCongestion(placeId: Long?, day: Int, hour: Int): Float{
+        val now = LocalDateTime.now()
+        return getTimeCongestion(
+            placeId,
+            LocalDateTime.of(
+                now.year,
+                now.month,
+                day,
+                hour,
+                now.minute
+            )
+        )
+    }
+
+    // 지정 시간 혼잡도 조회
+    fun getTimeCongestion(placeId: Long?, dateTime: LocalDateTime?): Float {
+
+        // DateTime
+        val dateTime = dateTime ?: LocalDateTime.now()
+
+        val key = getCongestionRedisKey(placeId, dateTime)
+        val value = redisTemplate.opsForValue().get(key)
+
+        val parsed = value?.toFloatOrNull()
+
+        // 값이 존재하교 유효하다면
+        if (parsed != null)return parsed // 그대로 반환
+
+        // 값이 없다면
+        setPlaceTimeCongestion(placeId, dateTime) // 새로 만들어서 할당
+        val newValue = redisTemplate.opsForValue().get(key)?.toFloatOrNull() // 새로 설정한 값 조회
+        return newValue ?: 0f // 반환, 값이 이상하다면 0 반환
+    }
+
     // 시간 혼잡도 설정
     private fun setPlaceTimeCongestion(placeId: Long?, dateTime: LocalDateTime) {
-        val roundedHour = (dateTime.hour / 3) * 3
-        val key = "place:congestion:$placeId-${dateTime.year}-${dateTime.monthValue}-${dateTime.dayOfMonth}-$roundedHour"
+        val key = getCongestionRedisKey(placeId, dateTime)
         val congestion = getRandomCongestion().toString()
         val success = redisTemplate.opsForValue().setIfAbsent(key, congestion, Duration.ofHours(24))
 
@@ -65,9 +74,11 @@ class PlaceRedisUtil(
     }
 
     // 혼잡도 생성 (1.0 ~ 5.0 사이의 Float)
-    private fun getRandomCongestion(): Float {
-        return (Math.random() * 4 + 1).toFloat()
-    }
+    private fun getRandomCongestion(): Float = (Math.random() * 4 + 1).toFloat()
 
+
+    // redis에 저장할 key 생성
+    private fun getCongestionRedisKey(placeId: Long?, dateTime: LocalDateTime): String
+        = "place:congestion:${placeId}-${dateTime.dayOfWeek}-${dateTime.hour}"
 
 }
