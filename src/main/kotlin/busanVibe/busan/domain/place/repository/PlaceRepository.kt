@@ -52,6 +52,7 @@ interface PlaceRepository: JpaRepository<Place, Long> {
         """
             SELECT p FROM Place p
             LEFT JOIN FETCH p.placeImages
+            LEFT JOIN FETCH p.placeLikes pl 
             WHERE p.id = :placeId
         """
     )

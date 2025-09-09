@@ -2,12 +2,14 @@ package busanVibe.busan.domain.place.service
 
 import busanVibe.busan.domain.place.domain.Place
 import busanVibe.busan.domain.place.domain.PlaceImage
+import busanVibe.busan.domain.place.domain.PlaceLike
 import busanVibe.busan.domain.place.domain.VisitorDistribution
 import busanVibe.busan.domain.place.dto.PlaceMapResponseDTO
 import busanVibe.busan.domain.place.enums.PlaceType
 import busanVibe.busan.domain.place.repository.PlaceRepository
 import busanVibe.busan.domain.place.repository.VisitorDistributionRepository
 import busanVibe.busan.domain.place.util.PlaceRedisUtil
+import busanVibe.busan.domain.user.service.login.AuthService
 import busanVibe.busan.global.apiPayload.code.status.ErrorStatus
 import busanVibe.busan.global.apiPayload.exception.GeneralException
 import busanVibe.busan.global.apiPayload.exception.handler.ExceptionHandler
@@ -83,8 +85,11 @@ class PlaceCongestionQueryService(
         // Image -> list
         // Redis -> congestion
 
+        // 유저 조회
+        val currentUser = AuthService().getCurrentUser()
+
         // 명소 조회
-        val place: Place? = placeRepository.findByIdWithReviewAndImage(placeId)
+        val place: Place? = placeRepository.findByIdWithLIkeAndImage(placeId)
         place?: throw ExceptionHandler(ErrorStatus.PLACE_NOT_FOUND)
 
         // 이미지 조회
@@ -94,6 +99,9 @@ class PlaceCongestionQueryService(
             .filter { it.imgUrl.isNotBlank() }
             .map { it.imgUrl }
 
+        // 좋아요 조회
+        val placeLikes: Set<PlaceLike> = place.placeLikes
+        val isLike = placeLikes.any { it.user.id == currentUser.id }
 
         return PlaceMapResponseDTO.PlaceDefaultInfoDto(
             id = place.id,
@@ -103,7 +111,8 @@ class PlaceCongestionQueryService(
             longitude = place.longitude,
             address = place.address,
             isOpen = true,
-            imgList = placeImageList
+            imgList = placeImageList,
+            isLike = isLike
         )
     }
 
