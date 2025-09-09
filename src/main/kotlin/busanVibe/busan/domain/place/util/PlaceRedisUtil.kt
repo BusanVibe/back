@@ -19,8 +19,12 @@ class PlaceRedisUtil(
         return getTimeCongestion(placeId, LocalDateTime.now())
     }
 
-    // [요일, 시간] 으로 혼잡도 구하는 메서드
-    // day: 1~7
+    /**
+    * [요일(1=Mon..7=Sun), 시간]으로 혼잡도 구하는 메서드
+    * @param placeId 조회 대상 장소 ID
+    * @param dayOfWeek 1..7 (1=월요일, 7=일요일)
+    * @param hour 0..23
+    */
     fun getTimeCongestion(placeId: Long?, day: Int, hour: Int): Float{
         val now = LocalDateTime.now()
         return getTimeCongestion(
@@ -44,13 +48,15 @@ class PlaceRedisUtil(
         val key = getCongestionRedisKey(placeId, dateTime)
         val value = redisTemplate.opsForValue().get(key)
 
-        return (if (value != null) {
-            value.toFloatOrNull() ?: 0
-        } else {
-            setPlaceTimeCongestion(placeId, dateTime)
-            val newValue = redisTemplate.opsForValue().get(key)
-            newValue?.toFloatOrNull() ?: 0
-        }) as Float
+        val parsed = value?.toFloatOrNull()
+
+        // 값이 존재하교 유효하다면
+        if (parsed != null)return parsed // 그대로 반환
+
+        // 값이 없다면
+        setPlaceTimeCongestion(placeId, dateTime) // 새로 만들어서 할당
+        val newValue = redisTemplate.opsForValue().get(key)?.toFloatOrNull() // 새로 설정한 값 조회
+        return newValue ?: 0f // 반환, 값이 이상하다면 0 반환
     }
 
     // 시간 혼잡도 설정
