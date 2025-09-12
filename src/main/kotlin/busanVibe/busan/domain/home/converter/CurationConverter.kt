@@ -28,11 +28,14 @@ class CurationConverter {
         imgUrl = festival.festivalImages.first().imgUrl
     )
 
-    fun toListDto(placeList: List<Place>, festivalList: List<Festival>) : HomeResponseDTO.CurationList{
-        val placeDtoList = placeList.map { placeToDto(it) }.toList()
-        val festivalDtoList =  festivalList.map { festivalToDto(it) }.toList()
+    fun placeListToDto(placeList: List<Place>): HomeResponseDTO.CurationList {
+        val placeDtoList = placeList.map { placeToDto(it) }
+        return HomeResponseDTO.CurationList(placeDtoList)
+    }
 
-        return HomeResponseDTO.CurationList( placeDtoList + festivalDtoList )
+    fun festivalListToDto(festivalList: List<Festival>): HomeResponseDTO.CurationList {
+        val festivalDtoList = festivalList.map { festivalToDto(it) }
+        return HomeResponseDTO.CurationList(festivalDtoList)
     }
 
 
