@@ -30,7 +30,9 @@ class ChatMongoService(
     private val userRepository: UserRepository,
     private val openAiService: OpenAiService,
     @Value("\${image.chat-bot}")
-    private val chatBotImage: String
+    private val chatBotImage: String,
+    @Value("\${image.guest}")
+    private val guestImage: String,
 ) {
 
     val log: Logger = LoggerFactory.getLogger(ChatMongoService::class.java)
@@ -165,9 +167,17 @@ class ChatMongoService(
         // DTO 변환
         val dtoList = chatHistory.map { chat ->
             val user: User? = userMap[chat.userId ?: -1]
+            val profileImage = when (chat.type) {
+                MessageType.CHAT, MessageType.BOT_REQUEST -> {
+                    user?.profileImageUrl
+                }
+                MessageType.BOT_RESPONSE -> {
+                    chatBotImage
+                }
+            }
             ChatMessageResponseDTO.ChatInfoDto(
                 userName = user?.nickname ?: "알 수 없음",
-                userImage = user?.profileImageUrl,
+                userImage = profileImage,
                 dateTime = chat.time,
                 content = chat.message,
                 isMy = user?.id == currentUser.id,
