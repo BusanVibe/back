@@ -89,7 +89,11 @@ class TourCommandService(
 //            if (!placeRepository.existsByContentId(apiItem.contentId)) {
 //                placeRepository.save(place)
 //            }
-            placeList.add(place)
+
+            // 이미지 있는 것들만 저장
+            if(place.placeImages.isNotEmpty()) {
+                placeList.add(place)
+            }
         }
 //        placeJdbcRepository.saveAll(placeList)
 //        placeRepository.saveAll(placeList)
@@ -126,17 +130,46 @@ class TourCommandService(
     }
 
     private fun getRandomVisitorDistribution(): VisitorDistribution {
+        // 그룹별 가중치 설정
+        val weights = mapOf(
+            "m1020" to 3,
+            "f1020" to 3,
+            "m3040" to 3,
+            "f3040" to 3,
+            "m5060" to 2,
+            "f5060" to 2,
+            "m70"   to 1,
+            "f70"   to 1,
+        )
+
+        val totalWeight = weights.values.sum()
+
+        // 비율대로 난수 생성
+        val raw = weights.mapValues { (_, w) -> Random.nextDouble() * w }
+
+        val rawSum = raw.values.sum()
+        val scaled = raw.mapValues { (_, v) -> (v / rawSum * 100).toInt() }
+
+        // 반올림으로 인해 총합이 100이 안될 수 있으므로 보정
+        val diff = 100 - scaled.values.sum()
+        val result = scaled.toMutableMap()
+        if (diff != 0) {
+            val adjustKey = result.keys.random()
+            result[adjustKey] = (result[adjustKey] ?: 0) + diff
+        }
+
         return VisitorDistribution(
-            m1020 = Random.nextInt(0, 101),
-            f1020 = Random.nextInt(0, 101),
-            m3040 = Random.nextInt(0, 101),
-            f3040 = Random.nextInt(0, 101),
-            m5060 = Random.nextInt(0, 101),
-            f5060 = Random.nextInt(0, 101),
-            m70 = Random.nextInt(0, 101),
-            f70 = Random.nextInt(0, 101),
+            m1020 = result["m1020"] ?: 0,
+            f1020 = result["f1020"] ?: 0,
+            m3040 = result["m3040"] ?: 0,
+            f3040 = result["f3040"] ?: 0,
+            m5060 = result["m5060"] ?: 0,
+            f5060 = result["f5060"] ?: 0,
+            m70   = result["m70"] ?: 0,
+            f70   = result["f70"] ?: 0,
         )
     }
+
 
     private fun String?.orNoInfo(): String = if (this.isNullOrBlank()) noInfo else this
     private fun BigDecimal?.orZero(): BigDecimal = this ?: BigDecimal.ZERO
